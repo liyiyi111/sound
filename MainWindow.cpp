@@ -5,8 +5,6 @@
 #include "tool/localconfig.h"
 #include "funcView.h"
 
-using namespace Tools::LocalConfig;
-
 class MainWindow::Data
 {
 public:
@@ -25,6 +23,19 @@ MainWindow::Data::Data(MainWindow *q):
 MainWindow::Data::~Data()
 {}
 
+static QString loadConfig(const QString &fileName, QJsonArray &arrs)
+{
+    QFile f(fileName);
+    if(!f.open(QFile::ReadOnly)) return f.errorString();
+
+    QJsonParseError error;
+    auto doc = QJsonDocument::fromJson(f.readAll(), &error);
+    arrs = doc.array();
+    if(arrs.isEmpty())
+        return error.errorString();
+    return {};
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MainWindow)
@@ -37,8 +48,19 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btnFind,&QPushButton::clicked,
             this, &MainWindow::find);
 
-    QString fpath = ":/config.json";
     auto trans = new QTranslator(this);
+    QJsonArray arr;
+    auto fpath = uR"(%1/%2)"_qs.arg(QDir::currentPath()).arg("config.json");
+    auto err = loadConfig(fpath,arr);
+    for(auto &&arrObj : arr)
+    {
+        auto obj = arrObj.toObject();
+        auto configInfo = obj["configInfo"].toString();
+        auto isLoad = trans->load(configInfo);
+        assert(isLoad);
+        QCoreApplication::installTranslator(trans);
+    }
+    qDebug() << QDir::currentPath();
 }
 
 MainWindow::~MainWindow()

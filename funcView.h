@@ -56,9 +56,13 @@ public:
     ~funcView();
 
     void initView();
-    void setRightTitle(const QString& ip);
+
     void setDriver(const NetDriver *driver);
 
+    //
+    void setRightTitle(const QString& ip);
+    void reboot();
+    void quit();
 
 private:
     Ui::funcView *ui;

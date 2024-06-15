@@ -3,6 +3,27 @@
 
 #include <QButtonGroup>
 #include <QTranslator>
+#include <QMessageBox>
+
+static QString saveConfigImp(const QString &fileName, const QByteArray &byte)
+{
+    QFile f(fileName);
+    if(!f.open(QFile::WriteOnly) || f.write(byte.data(), byte.size()) == -1)
+        return f.errorString();
+    return {};
+}
+
+static QString saveConfigImp(const QString &fileName, const QJsonDocument &doc)
+{
+    return saveConfigImp(fileName, doc.toJson());
+}
+
+static QString saveConfigImp(const QString &fileName, const QJsonArray &arrs)
+{
+    return saveConfigImp(fileName, QJsonDocument(arrs));
+}
+
+
 
 funcView::funcView(QWidget *parent):
     QWidget(parent),
@@ -14,6 +35,8 @@ funcView::funcView(QWidget *parent):
     this->setWindowTitle(tr("数字会议系统"));
     this->setMinimumSize(QSize(1280,720));
     initView();
+
+    connect(ui->btnReboot,&QPushButton::clicked,this,&funcView::reboot);
 }
 
 funcView::~funcView()
@@ -74,10 +97,17 @@ void funcView::initView()
 
     connect(ui->comLanguage,&QComboBox::currentIndexChanged,
             this, [this](const int& index){
+        ui->comLanguage->setCurrentIndex(index);
+
+        auto fpath = uR"(%1/%2)"_qs.arg(QDir::currentPath()).arg("config.json");
         auto model = ui->comLanguage->itemData(index).toString();
-        bool ok = m_trans->load(":/" + model + ".qm");
-        assert(ok);
-        QCoreApplication::installTranslator(m_trans);
+        auto convert = uR"(:/%1.qm)"_qs.arg(model);
+        QJsonObject obj;
+        obj.insert("configInfo",convert);
+
+        QJsonArray arr;
+        arr.push_back(obj);
+        auto err = saveConfigImp(fpath,arr);
     });
 
 }
@@ -86,5 +116,40 @@ void funcView::setDriver(const NetDriver *driver)
 {
     assert(driver);
     m_driver = driver;
+}
+
+void funcView::reboot()
+{
+    auto re = [this](){
+        auto program = QApplication::applicationFilePath();
+        auto arguments = QApplication::arguments();
+        auto workingDirectory = QDir::currentPath();
+        qDebug() << program;
+        qDebug() << arguments;
+        qDebug() << workingDirectory;
+         /*
+         * Starts the program set by setProgram() with arguments set by setArguments() in a new process, and detaches from it.
+         * Returns true on success; otherwise returns false.
+         * If the calling process exits, the detached process will continue to run unaffected.
+         * */
+        QProcess::startDetached(program,arguments,workingDirectory);
+        //Tells the application to exit with a return code.
+        QApplication::exit();
+    };
+
+    QMessageBox messagebox(QMessageBox::NoIcon,"提示","确定是否重启切换语言",
+                           QMessageBox::Yes | QMessageBox::No);
+
+    auto result = messagebox.exec();
+
+    switch (result) {
+    case QMessageBox::Yes:
+        re();
+        break;
+    case QMessageBox::No:
+        qDebug() << "不重启程序";
+        break;
+    }
+
 }
 

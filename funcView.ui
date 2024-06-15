@@ -64,7 +64,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="page_3">
         <layout class="QGridLayout" name="gridLayout_8">
@@ -556,7 +556,7 @@
             <widget class="QComboBox" name="comLanguage"/>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_12">
+            <widget class="QPushButton" name="btnReboot">
              <property name="text">
               <string>设置</string>
              </property>

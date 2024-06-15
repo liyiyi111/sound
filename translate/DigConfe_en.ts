@@ -11,7 +11,7 @@
     </message>
     <message>
         <location filename="../MainWindow.ui" line="39"/>
-        <location filename="../MainWindow.cpp" line="36"/>
+        <location filename="../MainWindow.cpp" line="47"/>
         <location filename="../../build-DigConfe-Desktop_Qt_6_5_3_MSVC2019_64bit-Debug/DigConfe_autogen/include/ui_MainWindow.h" line="72"/>
         <source>数字会议系统</source>
         <translatorcomment>Digital conference system</translatorcomment>
@@ -19,7 +19,7 @@
     </message>
     <message>
         <location filename="../MainWindow.ui" line="53"/>
-        <location filename="../MainWindow.cpp" line="35"/>
+        <location filename="../MainWindow.cpp" line="46"/>
         <location filename="../../build-DigConfe-Desktop_Qt_6_5_3_MSVC2019_64bit-Debug/DigConfe_autogen/include/ui_MainWindow.h" line="74"/>
         <source>搜索</source>
         <translation>find</translation>
@@ -200,32 +200,32 @@
         <translation>IP gateway</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="14"/>
+        <location filename="../funcView.cpp" line="35"/>
         <source>数字会议系统</source>
         <translation>Digital conference</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="28"/>
+        <location filename="../funcView.cpp" line="51"/>
         <source>主机设置</source>
         <translation>Host</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="29"/>
+        <location filename="../funcView.cpp" line="52"/>
         <source>单元设置</source>
         <translation>Cell</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="30"/>
+        <location filename="../funcView.cpp" line="53"/>
         <source>摄像设置</source>
         <translation>Camer shoot</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="31"/>
+        <location filename="../funcView.cpp" line="54"/>
         <source>语言设置</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="32"/>
+        <location filename="../funcView.cpp" line="55"/>
         <source>网络设置</source>
         <translation>Network</translation>
     </message>
