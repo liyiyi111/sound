@@ -29,7 +29,8 @@ public:
     void netWrite(const QByteArray& data);
     //接收
     void readyReadSlot();
-
+    //TODO 增加心跳回调
+    void callheartbeat();
 signals:
     void netRead(const QByteArray& data);
     void netDisConnected();

@@ -1,0 +1,10 @@
+{
+    "name": "usehtml",
+    "version-semver": "2.0.0",
+    "dependencies": [
+        "asio",
+        "fmt",
+        "range-v3"
+    ],
+    "builtin-baseline": "cc97b4536ae749ec0e4f643488b600b217540fb3"
+}

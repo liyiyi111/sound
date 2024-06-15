@@ -63,4 +63,5 @@ public:
 private:
     Ui::funcView *ui;
     const NetDriver *m_driver;
+    QTranslator *m_trans;
 };

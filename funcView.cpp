@@ -4,9 +4,11 @@
 #include <QButtonGroup>
 #include <QTranslator>
 
-funcView::funcView(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::funcView)
+funcView::funcView(QWidget *parent):
+    QWidget(parent),
+    ui(new Ui::funcView),
+    m_trans(new QTranslator(this))
+
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("数字会议系统"));
@@ -52,7 +54,7 @@ void funcView::initView()
     QList<QLabel *> labelList = findChildren<QLabel *>();
     for (QLabel *label : labelList) {
         auto text = label->text().toUtf8();
-        label->setText(QObject::tr(text));
+        label->setText(tr(text));
     }
 
     auto buttons = findChildren<QPushButton *>();
@@ -72,11 +74,10 @@ void funcView::initView()
 
     connect(ui->comLanguage,&QComboBox::currentIndexChanged,
             this, [this](const int& index){
-        auto trans = new QTranslator(this);
         auto model = ui->comLanguage->itemData(index).toString();
-        bool ok = trans->load(":/" + model + ".qm");
+        bool ok = m_trans->load(":/" + model + ".qm");
         assert(ok);
-        QCoreApplication::installTranslator(trans);
+        QCoreApplication::installTranslator(m_trans);
     });
 
 }

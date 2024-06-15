@@ -28,6 +28,11 @@ file(GLOB_RECURSE HEADERS "*.h")
 file(GLOB_RECURSE SOURCES "*.cpp")
 file(GLOB_RECURSE FORMS	  "*.ui")
 
+find_package(fmt CONFIG REQUIRED)
+find_package(range-v3 CONFIG REQUIRED)
+find_package(asio CONFIG REQUIRED)
+
+
 add_executable(DigConfe
     ${HEADERS}
     ${SOURCES}
@@ -40,6 +45,9 @@ target_link_libraries(DigConfe
     Qt::Xml
     Qt::PdfWidgets
     Qt::Network
+    fmt::fmt
+    range-v3::range-v3
+    asio::asio
 )
 
 qt_add_lupdate(DigConfe TS_FILES ${TS_FILES})
@@ -52,7 +60,10 @@ qt_add_resources(DigConfe
     PREFIX "/"
     FILES "en_UN.qm"
           "zh_CN.qm"
+          "config.json"
 )
+
+#TODO 增加自动cmd指令执行
 # find_program(LUPDATE_EXECUTABLE lupdate)
 # find_program(LRELEASE_EXECUTABLE  lrelease)
 

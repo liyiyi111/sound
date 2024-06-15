@@ -200,32 +200,32 @@
         <translation>IP gateway</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="12"/>
+        <location filename="../funcView.cpp" line="14"/>
         <source>数字会议系统</source>
         <translation>Digital conference</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="26"/>
+        <location filename="../funcView.cpp" line="28"/>
         <source>主机设置</source>
         <translation>Host</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="27"/>
+        <location filename="../funcView.cpp" line="29"/>
         <source>单元设置</source>
         <translation>Cell</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="28"/>
+        <location filename="../funcView.cpp" line="30"/>
         <source>摄像设置</source>
         <translation>Camer shoot</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="29"/>
+        <location filename="../funcView.cpp" line="31"/>
         <source>语言设置</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../funcView.cpp" line="30"/>
+        <location filename="../funcView.cpp" line="32"/>
         <source>网络设置</source>
         <translation>Network</translation>
     </message>

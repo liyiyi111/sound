@@ -67,6 +67,11 @@ void NetDriver::netDisconnectFromServer()
     }
 }
 
+void NetDriver::netGetNetStatus()
+{
+
+}
+
 void NetDriver::netWrite(const QByteArray &data)
 {
     auto callLen = m_client->write(data);
@@ -80,6 +85,11 @@ void NetDriver::readyReadSlot()
     emit netRead(data);
 }
 
+void NetDriver::callheartbeat()
+{
+
+}
+
 parse::parse(NetDriver *driver) :
     m_driver(driver)
 {
@@ -89,6 +99,14 @@ parse::parse(NetDriver *driver) :
 }
 
 parse::~parse()
+{}
+
+void parse::setVolume(const int &volume)
+{
+
+}
+
+void parse::setNum(const int &num)
 {
 
 }

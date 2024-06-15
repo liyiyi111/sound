@@ -2,7 +2,10 @@
 #include "./ui_MainWindow.h"
 
 #include "base.h"
+#include "tool/localconfig.h"
 #include "funcView.h"
+
+using namespace Tools::LocalConfig;
 
 class MainWindow::Data
 {
@@ -20,10 +23,7 @@ MainWindow::Data::Data(MainWindow *q):
 {}
 
 MainWindow::Data::~Data()
-{
-
-}
-
+{}
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
@@ -36,6 +36,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle(tr("数字会议系统"));
     connect(ui->btnFind,&QPushButton::clicked,
             this, &MainWindow::find);
+
+    QString fpath = ":/config.json";
+    auto trans = new QTranslator(this);
 }
 
 MainWindow::~MainWindow()
@@ -49,12 +52,12 @@ void MainWindow::find()
 
     auto ip = ui->editIp->text();
     int state = d->netDriver->netConnectToSever(ip,5000);
+    this->setVisible(false);
+    view->show();
+    view->setDriver(d->netDriver);
 
     switch (state) {
     case connentState::succ:
-        this->close();
-        view->show();
-        view->setDriver(d->netDriver);
         ui->editIp->setStyleSheet("background-color:green");
         break;
     case connentState::fail:

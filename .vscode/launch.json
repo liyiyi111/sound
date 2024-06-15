@@ -1,0 +1,34 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "debug CMake launch target",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "visualizerFile": "${workspaceFolder}/qt6.natvis",
+            "stopAtEntry": false,
+            "cwd": "${command:cmake.getLaunchTargetDirectory}",
+            "envFile": "${workspaceFolder}/.vscode/launch.env",
+            "console": "integratedTerminal",
+            "sourceFileMap": {
+                "C:\\work\\build\\qt5_workdir\\w\\s": "E:\\Qt\\6.5.3\\Src",
+                "Q:\\qt5_workdir\\w\\s": "E:\\Qt\\6.5.3\\Src",
+                "c:\\Users\\qt\\work\\install": "E:\\Qt\\6.5.3\\Src",
+                "c:\\users\\qt\\work\\qt": "E:\\Qt\\6.5.3\\Src"
+            },
+            "symbolSearchPath": "E:\\Qt\\6.5.3\\msvc2019_64\\bin"
+        },
+        {
+            "name": "Python: 当前文件",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
+    ]
+}
