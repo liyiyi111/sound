@@ -1,0 +1,362 @@
+
+QWidget#MainWindow{
+    border-image:url(:/pic/背景.png);
+    border-top-left-radius: 15px; /* 左上角圆角 */
+    border-top-right-radius: 15px; /* 右上角圆角 */
+    border-bottom-left-radius: 0px; /* 左下角不圆角 */
+    border-bottom-right-radius: 0px; /* 右下角不圆角 */
+}
+
+QWidget#widget
+{
+        background-image : url(:/背景.png);
+}
+
+QWidget#hostWidget {
+        border: 3px solid #ffffff; /* 白色边框 */
+    }
+    
+QPushButton#btnFind
+{
+    background-image: url(:/按钮-未选中.png);
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#btnFind:pressed
+{
+        background-image: url(:/按钮-选中.png);
+}
+
+QPushButton#btnHost
+{
+        border-image: url(:/按钮-未选中.png);
+        padding:0%;
+}
+QPushButton#btnHost:pressed
+{
+        border-image: url(:/按钮-选中.png);
+}
+
+QPushButton#btnCell
+{
+        border-image: url(:/按钮-未选中.png);
+        padding:0%;
+}
+QPushButton#btnCell:pressed
+{
+        border-image: url(:/按钮-选中.png);
+}
+
+
+QPushButton#btnTrack
+{
+        border-image: url(:/按钮-未选中.png);
+        padding:0%;
+}
+QPushButton#btnTrack:pressed
+{
+        border-image: url(:/按钮-选中.png);
+}
+
+
+QPushButton#btnLanguage
+{
+        border-image: url(:/按钮-未选中.png);
+        padding:0%;
+}
+QPushButton#btnLanguage:pressed
+{
+        border-image: url(:/按钮-选中.png);
+}
+
+
+QPushButton#btnNetwork
+{
+        border-image: url(:/按钮-未选中.png);
+        padding:0%;
+}
+QPushButton#btnNetwork:pressed
+{
+        border-image: url(:/按钮-选中.png);
+}
+
+
+QPushButton
+{
+        color: white;
+        font-size: 22px;
+}
+
+QPushButton#btnCellAddr
+{
+    background-image: url(:/按钮-未选中.png);
+    font-size: 15px;
+    color: white; /* 设置字体颜色为白色 */
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#btnCellAddr:pressed
+{
+        background-image: url(:/按钮-选中.png);
+}
+
+
+QPushButton#btnHead
+{
+    background-image: url(:/按钮-未选中.png);
+    font-size: 15px;
+    color: white; /* 设置字体颜色为白色 */
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#btnHead:pressed
+{
+        background-image: url(:/按钮-选中.png);
+}
+
+
+QPushButton#btnMic
+{
+    background-image: url(:/按钮-未选中.png);
+    font-size: 15px;
+    color: white; /* 设置字体颜色为白色 */
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#btnMic:pressed
+{
+        background-image: url(:/按钮-选中.png);
+}
+
+QPushButton#button0
+{
+    border-image: url(:/未选中.png);
+    font-size: 28px;
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#button0:pressed
+{
+        border-image: url(:/选中.png);
+}
+
+
+QPushButton#button1
+{
+    border-image: url(:/未选中.png);
+    color: white; /* 设置字体颜色为白色 */
+    font-size: 28px;
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#button1:pressed
+{
+        border-image: url(:/选中.png);
+        
+}
+
+
+QPushButton#button2
+{
+        border-image: url(:/未选中.png);
+    color: white; /* 设置字体颜色为白色 */
+    font-size: 28px;
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#button2:pressed
+{
+        border-image: url(:/选中.png);
+}
+
+QPushButton#button3
+{
+        border-image: url(:/未选中.png);
+    color: white; /* 设置字体颜色为白色 */
+    font-size: 28px;
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#button3:pressed
+{
+        border-image: url(:/选中.png);       
+}
+
+QPushButton#button4
+{
+        border-image: url(:/未选中.png);
+    color: white; /* 设置字体颜色为白色 */
+    font-size: 28px;
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#button4:pressed
+{
+        border-image: url(:/选中.png);
+}
+
+QPushButton#button5
+{
+        border-image: url(:/未选中.png);
+    font-size: 28px;
+    color: white; /* 设置字体颜色为白色 */
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#button5:pressed
+{
+        border-image: url(:/选中.png);
+}
+
+QPushButton#button6
+{
+        border-image: url(:/未选中.png);
+    font-size: 28px;
+    color: white; /* 设置字体颜色为白色 */
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#button6:pressed
+{
+        border-image: url(:/选中.png);
+}
+
+/*滑块的样式*/
+
+QSlider::groove::vertical{
+background: #1E2540;
+position: absolute;
+left: 4px; right: 4px;
+}
+
+QSlider::handle:vertical {
+width: 100px;
+height: 40px;
+border-image:url(":/推子.png");
+margin: 0 -4px; /* expand outside the groove */
+}
+
+QSlider::add-page:vertical
+{
+        background: #1e466d;
+}
+
+
+QFrame, QLabel, QToolTip {
+        width: 120px;
+        height: 35;
+        font-size: 26px;
+        color: white;
+    }
+
+QComboBox
+{
+        width: 161;
+        height: 51;
+        font-size: 15px;
+        padding: 1px 2px 1px 2px;
+        text-align: bottom;
+        border-style: solid;
+        background-color:#112C47;
+        padding-left: 10px;
+        color: white;
+}
+
+QComboBox QAbstractItemView {
+        border: 2px solid #112C47;
+        color: #112C47;
+        selection-background-color: #112C47;
+    }
+    
+QPushButton#btnSave
+{
+    background-image: url(:/按钮-未选中.png);
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#btnSave:pressed
+{
+     background-image: url(:/按钮-选中.png);
+}
+
+QPushButton#btnSave2
+{
+    background-image: url(:/按钮-未选中.png);
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#btnSave2:pressed
+{
+     background-image: url(:/按钮-选中.png);
+}
+
+QLineEdit#editIp
+{
+    border-image: url(:/ip框.png);
+    font-size: 25px; /* 设置字体大小为14px，你也可以根据需要调整这个数值 */
+    color: white;
+    padding-bottom: 32px; /* 设置文本与上边框的间距为5px，可以根据需要调整 */
+}
+
+QLineEdit#editIpAddress {
+        width: 187px;
+        border-image: url(:/按钮-未选中.png);
+        background-repeat: no-repeat;
+        min-height: 52px;
+ }
+ 
+ QLineEdit#editIpAddress:hover {
+         width: 187px;
+         border-image: url(:/按钮-未选中.png); /* 悬停状态保持未选中的背景 */
+         min-height: 52px;
+ }
+    
+ QLineEdit#editIpAddress:focus {
+         width: 187px;
+         border-image: url(:/按钮-选中.png); /* 获得焦点时显示选中的背景 */
+         min-height: 52px;
+ }
+ 
+
+QLineEdit#editMask {
+       width: 187px;
+       border-image: url(:/按钮-未选中.png);
+       background-repeat: no-repeat;
+       min-height: 52px;
+}
+
+QLineEdit#editMask:hover {
+        width: 187px;
+        border-image: url(:/按钮-未选中.png); /* 悬停状态保持未选中的背景 */
+        min-height: 52px;
+}
+   
+QLineEdit#editMask:focus {
+        width: 187px;
+        border-image: url(:/按钮-选中.png); /* 获得焦点时显示选中的背景 */
+        min-height: 52px;
+}
+
+
+QLineEdit#editGateWay {
+        width: 187px;
+        border-image: url(:/按钮-未选中.png);
+        background-repeat: no-repeat;
+        min-height: 52px;
+ }
+ 
+ QLineEdit#editGateWay:hover {
+         width: 187px;
+         border-image: url(:/按钮-未选中.png); /* 悬停状态保持未选中的背景 */
+         min-height: 52px;
+ }
+    
+ QLineEdit#editGateWay:focus {
+         width: 187px;
+         border-image: url(:/按钮-选中.png); /* 获得焦点时显示选中的背景 */
+         min-height: 52px;
+ }
+ 
+QMessageBox{
+        background-color: #1E2540;
+}

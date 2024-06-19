@@ -1,4 +1,6 @@
 #include "base.h"
+#include <QMessageBox>
+
 NetDriver::NetDriver(QObject *parent):
     QObject{parent},
     m_client(new QTcpSocket(this))
@@ -54,7 +56,10 @@ bool NetDriver::netConnectToSever(const QString &ip, const int &port)
     m_client->connectToHost(address,converPort);
     auto state = m_client->waitForConnected(300);
     if(!state)
-        qDebug() << m_client->errorString();
+    {
+        auto errMess = m_client->errorString();
+        QMessageBox::about(NULL,tr("错误提示"),tr(errMess.toUtf8()));
+    }
     return state;
 }
 
@@ -72,11 +77,10 @@ void NetDriver::netGetNetStatus()
 
 }
 
-void NetDriver::netWrite(const QByteArray &data)
+void NetDriver::netWrite(const QByteArray &data) const
 {
     auto callLen = m_client->write(data);
-    if(callLen != data.length())
-        qDebug() << "data length error";
+    assert(callLen = data.size());
 }
 
 void NetDriver::readyReadSlot()
@@ -90,23 +94,97 @@ void NetDriver::callheartbeat()
 
 }
 
-parse::parse(NetDriver *driver) :
+Parse::Parse(const NetDriver *driver) :
     m_driver(driver)
 {
     connect(m_driver,&NetDriver::netRead,this,[this](const QByteArray& array){
-        this->m_Datas = std::move(array);
+     qDebug() << array;
+     this->m_Datas = std::move(array);
     });
 }
 
-parse::~parse()
+Parse::~Parse()
 {}
 
-void parse::setVolume(const int &volume)
+void Parse::sendHostVolume(const int &volume)
 {
 
 }
 
-void parse::setNum(const int &num)
+void Parse::sendPersonNums(const int &num)
 {
 
+}
+
+void Parse::sendCellSetting(const CellState &state)
+{
+    QByteArray bytes;
+    bytes.append(0xA0);
+    switch(state)
+    {
+    case CellState::cell:
+        bytes.append((char*)0x00);
+        bytes.append((char*)0x00);
+        bytes.append((char*)0x00);
+        bytes.append(0x0A);
+        m_driver->netWrite(std::move(bytes));
+        break;
+    case CellState::head:
+        bytes.append((char*)0xFA);
+        bytes.append((char*)0x00);
+        bytes.append((char*)0x00);
+        bytes.append(0x0A);
+        m_driver->netWrite(std::move(bytes));
+        break;
+    case CellState::voice:
+        bytes.append((char*)0x00);
+        bytes.append((char*)0x00);
+        bytes.append((char*)0x00);
+        bytes.append(0x0A);
+        m_driver->netWrite(std::move(bytes));
+        break;
+    }
+}
+
+void Parse::sendPTZProtocol(const QString &val)
+{
+
+}
+
+void Parse::sendBaud(const QString &val)
+{
+
+}
+
+void Parse::sendPTZAddress(const QString &val)
+{
+
+}
+
+void Parse::sendCellAddress(const QString &val)
+{
+
+}
+
+void Parse::sendNetWorkConfig(const ShardDatas::netWork &config)
+{
+
+}
+
+void PushButton::paintEvent(QPaintEvent *event)
+{
+    ShardDatas::drawView(this,1,1);
+    QPushButton::paintEvent(event);
+}
+
+void Slider::paintEvent(QPaintEvent *event)
+{
+    ShardDatas::drawView(this,1,1);
+    QSlider::paintEvent(event);
+}
+
+void ComboBox::paintEvent(QPaintEvent *event)
+{
+    ShardDatas::drawView(this,1,1);
+    QComboBox::paintEvent(event);
 }

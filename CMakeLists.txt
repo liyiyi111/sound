@@ -6,7 +6,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(TRANS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/translate")
@@ -37,6 +37,7 @@ add_executable(DigConfe
     ${HEADERS}
     ${SOURCES}
     ${FORMS}
+    pic/image.qrc
 )
 
 target_link_libraries(DigConfe
@@ -60,7 +61,7 @@ qt_add_resources(DigConfe
     PREFIX "/"
     FILES "en_UN.qm"
           "zh_CN.qm"
-          "config.json"
+           "style.css"
 )
 
 #TODO 增加自动cmd指令执行

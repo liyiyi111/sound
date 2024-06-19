@@ -1,27 +1,7 @@
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
-
 #include "base.h"
-#include "tool/localconfig.h"
 #include "funcView.h"
-
-class MainWindow::Data
-{
-public:
-    Data(MainWindow *q);
-    ~Data();
-public:
-    MainWindow *q;
-    NetDriver *netDriver;
-};
-
-MainWindow::Data::Data(MainWindow *q):
-    q(q),
-    netDriver(new NetDriver(q))
-{}
-
-MainWindow::Data::~Data()
-{}
 
 static QString loadConfig(const QString &fileName, QJsonArray &arrs)
 {
@@ -36,6 +16,43 @@ static QString loadConfig(const QString &fileName, QJsonArray &arrs)
     return {};
 }
 
+static QString loadCss(const QString& fileName,QByteArray &array)
+{
+    QFile f(fileName);
+    if(!f.open(QFile::ReadOnly))
+        return f.errorString();
+    array = f.readAll();
+    if(array.isEmpty())
+        return u"array is Empty"_qs;
+    return {};
+}
+
+class MainWindow::Data
+{
+public:
+    Data(MainWindow *q);
+    ~Data();
+public:
+    MainWindow *q;
+    NetDriver *netDriver;
+    QByteArray array;
+};
+
+MainWindow::Data::Data(MainWindow *q):
+    q(q),
+    netDriver(new NetDriver(q)),
+    array([](){
+        QByteArray array;
+        auto err = loadCss(u":/style.css"_qs,array);
+        assert(err.isEmpty());
+        return array;
+    }())
+{}
+
+MainWindow::Data::~Data()
+{}
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MainWindow)
@@ -44,23 +61,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->editIp->setText("192.168.1.244");
     ui->btnFind->setText(tr("搜索"));
-    this->setWindowTitle(tr("数字会议系统"));
+
     connect(ui->btnFind,&QPushButton::clicked,
             this, &MainWindow::find);
+    this->setStyleSheet(d->array);
 
-    auto trans = new QTranslator(this);
-    QJsonArray arr;
-    auto fpath = uR"(%1/%2)"_qs.arg(QDir::currentPath()).arg("config.json");
-    auto err = loadConfig(fpath,arr);
-    for(auto &&arrObj : arr)
-    {
-        auto obj = arrObj.toObject();
-        auto configInfo = obj["configInfo"].toString();
-        auto isLoad = trans->load(configInfo);
-        assert(isLoad);
-        QCoreApplication::installTranslator(trans);
-    }
-    qDebug() << QDir::currentPath();
+    this->setFixedSize(QSize(1280,720));
+    ui->widget->setFixedSize(QSize(1280,720));
+    ui->editIp->setFixedSize(QSize(219,105));
+    ui->btnFind->setFixedSize(QSize(161,52));
 }
 
 MainWindow::~MainWindow()
@@ -71,13 +80,13 @@ MainWindow::~MainWindow()
 void MainWindow::find()
 {
     auto view = new funcView();
-
     auto ip = ui->editIp->text();
     int state = d->netDriver->netConnectToSever(ip,5000);
     this->setVisible(false);
+    view->setStyleSheet(d->array);
+    view->setTitle(ip);
     view->show();
     view->setDriver(d->netDriver);
-
     switch (state) {
     case connentState::succ:
         ui->editIp->setStyleSheet("background-color:green");
@@ -87,4 +96,17 @@ void MainWindow::find()
         break;
     }
 }
+/*
+ * 增加QWidget的样式
+ * */
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+    ShardDatas::drawView(this,30,30);
+    QWidget::paintEvent(event);
+}
 
+void LineEdit::paintEvent(QPaintEvent *event)
+{
+    ShardDatas::drawView(this,5,5);
+    QLineEdit::paintEvent(event);
+}

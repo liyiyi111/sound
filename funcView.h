@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <QTranslator>
+#include <QComboBox>
 
 #include "base.h"
 
@@ -56,16 +57,27 @@ public:
     ~funcView();
 
     void initView();
-
+    void setTitle(QString &ip);
     void setDriver(const NetDriver *driver);
 
-    //
-    void setRightTitle(const QString& ip);
-    void reboot();
-    void quit();
+    void sendHostVolume(const int& val);
+    void sendPersonNums(const int& val);
+    void sendCellSetting(const Parse::CellState& state);
+    void sendPTZProtocol(const QString& val);
+    void sendBaud(const QString& val);
+    void sendPTZAddress(const QString& val);
+    void sendCellAddress(const QString& val);
+    void sendNetWorkConfig(const ShardDatas::netWork &config);
+
+    [[maybe_unused]]void reboot();
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     Ui::funcView *ui;
     const NetDriver *m_driver;
     QTranslator *m_trans;
+    Parse *m_parse;
+    QString m_ip;
 };
