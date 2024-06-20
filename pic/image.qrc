@@ -45,5 +45,7 @@
         <file>网络.png</file>
         <file>语言.png</file>
         <file>主机.png</file>
+        <file>close.png</file>
+        <file>边框.png</file>
     </qresource>
 </RCC>

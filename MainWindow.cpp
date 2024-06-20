@@ -52,24 +52,27 @@ MainWindow::Data::Data(MainWindow *q):
 MainWindow::Data::~Data()
 {}
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MainWindow)
     , d(std::make_unique<Data>(this))
 {
     ui->setupUi(this);
-    ui->editIp->setText("192.168.1.244");
+    ui->editIp->setText("192.168.100.6");
     ui->btnFind->setText(tr("搜索"));
 
     connect(ui->btnFind,&QPushButton::clicked,
             this, &MainWindow::find);
     this->setStyleSheet(d->array);
 
+    //可以设置为最小
     this->setFixedSize(QSize(1280,720));
     ui->widget->setFixedSize(QSize(1280,720));
     ui->editIp->setFixedSize(QSize(219,105));
     ui->btnFind->setFixedSize(QSize(161,52));
+
+    connect(ui->pushButton,&QPushButton::clicked,this,
+            &MainWindow::close);
 }
 
 MainWindow::~MainWindow()
@@ -81,14 +84,15 @@ void MainWindow::find()
 {
     auto view = new funcView();
     auto ip = ui->editIp->text();
-    int state = d->netDriver->netConnectToSever(ip,5000);
-    this->setVisible(false);
-    view->setStyleSheet(d->array);
-    view->setTitle(ip);
-    view->show();
-    view->setDriver(d->netDriver);
+    int state = d->netDriver->netConnectToSever(ip,6000);
+
     switch (state) {
     case connentState::succ:
+        this->setVisible(false);
+        view->setStyleSheet(d->array);
+        view->setTitle(ip);
+        view->show();
+        view->setDriver(d->netDriver);
         ui->editIp->setStyleSheet("background-color:green");
         break;
     case connentState::fail:
@@ -96,6 +100,7 @@ void MainWindow::find()
         break;
     }
 }
+
 /*
  * 增加QWidget的样式
  * */
@@ -110,3 +115,9 @@ void LineEdit::paintEvent(QPaintEvent *event)
     ShardDatas::drawView(this,5,5);
     QLineEdit::paintEvent(event);
 }
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QWidget::closeEvent(event);
+}
+

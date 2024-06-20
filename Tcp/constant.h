@@ -17,7 +17,6 @@ static const char *NET_PACKET_END = "PACKET_END";
 static const int NET_PACKET_TYPE_BYTES = 2; //包类型
 static const int NET_PACKET_LENGTH_BYTES = 8; //包数据长度占几个字节
 
-
 //包类型
 static const char *NET_PACKET_TYPE_SEND_FILE = "01";//发送文件
 static const char *NET_PACKET_TYPE_SEND_TEXT = "02";//发送文本

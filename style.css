@@ -12,72 +12,23 @@ QWidget#widget
         background-image : url(:/背景.png);
 }
 
-QWidget#hostWidget {
-        border: 3px solid #ffffff; /* 白色边框 */
-    }
     
 QPushButton#btnFind
 {
     background-image: url(:/按钮-未选中.png);
     border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+    border: none; /* 消除默认的边框 */
 }
 
 QPushButton#btnFind:pressed
 {
         background-image: url(:/按钮-选中.png);
+        border: none; /* 消除默认的边框 */
 }
 
-QPushButton#btnHost
-{
-        border-image: url(:/按钮-未选中.png);
-        padding:0%;
-}
-QPushButton#btnHost:pressed
-{
-        border-image: url(:/按钮-选中.png);
-}
-
-QPushButton#btnCell
-{
-        border-image: url(:/按钮-未选中.png);
-        padding:0%;
-}
-QPushButton#btnCell:pressed
-{
-        border-image: url(:/按钮-选中.png);
-}
-
-
-QPushButton#btnTrack
-{
-        border-image: url(:/按钮-未选中.png);
-        padding:0%;
-}
-QPushButton#btnTrack:pressed
-{
-        border-image: url(:/按钮-选中.png);
-}
-
-
-QPushButton#btnLanguage
-{
-        border-image: url(:/按钮-未选中.png);
-        padding:0%;
-}
-QPushButton#btnLanguage:pressed
-{
-        border-image: url(:/按钮-选中.png);
-}
-
-
-QPushButton#btnNetwork
-{
-        border-image: url(:/按钮-未选中.png);
-        padding:0%;
-}
-QPushButton#btnNetwork:pressed
-{
-        border-image: url(:/按钮-选中.png);
+QWidget#hostWidget {
+        border-image: url(":/边框.png");
+        border: none;
 }
 
 
@@ -85,6 +36,11 @@ QPushButton
 {
         color: white;
         font-size: 22px;
+}
+
+QPushButton:pressed
+{
+        border: none;
 }
 
 QPushButton#btnCellAddr
@@ -355,8 +311,37 @@ QLineEdit#editGateWay {
          width: 187px;
          border-image: url(:/按钮-选中.png); /* 获得焦点时显示选中的背景 */
          min-height: 52px;
- }
+}
+QPushButton#btnBig
+{
+        border-image: url(:/+未选中.png);
+}
  
+QPushButton#btnBig:pressed
+{
+        border-image: url(:/+选中.png);
+}
+
+QPushButton#btnReduce
+{
+        border-image: url(:/-未选中.png);
+}
+ 
+QPushButton#btnReduce:pressed
+{
+        border-image: url(:/-选中.png);
+}
+
+
 QMessageBox{
         background-color: #1E2540;
 }
+
+
+QMessageBox QPushButton {
+        /* 按钮的样式 */
+        color: white; /* 按钮文字颜色 */
+        background-color: #3E4E76; /* 按钮背景色 */
+        border: 1px solid #3E4E76; /* 按钮边框 */
+        padding: 5px; /* 按钮内边距 */
+    }

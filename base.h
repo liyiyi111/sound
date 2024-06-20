@@ -112,6 +112,13 @@ public:
         head
     };
 
+    enum  Protocol
+    {
+        VISCA = 0,
+        PELCO_D,
+        PELCO_P
+    };
+
     explicit Parse(const NetDriver *driver);
     ~Parse();
 
@@ -120,13 +127,22 @@ public:
     void sendCellSetting(const CellState& state);
     void sendPTZProtocol(const QString& val);
     void sendBaud(const QString& val);
-    void sendPTZAddress(const QString& val);
+    void sendPTZAddress(const QString &camerId, const QString& val);
     void sendCellAddress(const QString& val);
     void sendNetWorkConfig(const ShardDatas::netWork &config);
+    //上下左右
+    void up();
+    void down();
+    void left();
+    void right();
+    void blowUp();
+    void zoomOut();
 
 private:
     const NetDriver *m_driver;
     QByteArray m_Datas;
+public:
+    Protocol m_prostate;
 };
 
 

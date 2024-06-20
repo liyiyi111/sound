@@ -57,6 +57,7 @@ public:
     ~funcView();
 
     void initView();
+    void initConnect();
     void setTitle(QString &ip);
     void setDriver(const NetDriver *driver);
 
@@ -65,14 +66,20 @@ public:
     void sendCellSetting(const Parse::CellState& state);
     void sendPTZProtocol(const QString& val);
     void sendBaud(const QString& val);
-    void sendPTZAddress(const QString& val);
+    void sendPTZAddress(const QString& camerId,const QString& val);
     void sendCellAddress(const QString& val);
     void sendNetWorkConfig(const ShardDatas::netWork &config);
-
+    void sendUp();
+    void sendDown();
+    void sendLeft();
+    void sendRight();
+    void sendBlowup();
+    void sendZoomout();
     [[maybe_unused]]void reboot();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
+     void closeEvent(QCloseEvent *event) override;
 
 private:
     Ui::funcView *ui;
