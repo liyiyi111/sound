@@ -5,6 +5,8 @@
 #include <QTranslator>
 #include <QMessageBox>
 
+
+
 static QString saveConfigImp(const QString &fileName, const QByteArray &byte)
 {
     QFile f(fileName);
@@ -36,7 +38,7 @@ funcView::funcView(QWidget *parent):
     std::map<QString,QString> items = {
                                         {"简体中文","zh_CN"},
                                         {"English","en_UN"},
-                                        };
+                                    };
     for(auto &&[text,value]: items)
         ui->comLanguage->addItem(text,value);
     ui->comLanguage->setCurrentIndex(1);
@@ -125,7 +127,7 @@ funcView::funcView(QWidget *parent):
         }
     };
     newIcon({{ui->btnUp,0},{ui->btnDown,1},{ui->btnLeft,2},{ui->btnRight,3}});
-    ui->sliderHost->setRange(0,32);
+
 
     static const auto moveY = ui->hostWidget->geometry().y() + 80;
     ui->hostWidget->move(ui->hostWidget->geometry().x(), moveY);
@@ -138,6 +140,18 @@ funcView::funcView(QWidget *parent):
     //更新
     for(auto i = 1 ; i <= 16; i++)
         ui->cbCamera->addItem(QString::number(i));
+
+    QString styleSheet = "QSlider::handle {"
+                         "width: 200%;"
+                         "height: 20px;"
+                         "background-color: #ff0000;"
+                         "border-radius: 10px;"
+                         "border-image:url(:/推子.png);"
+                         "}";
+
+
+    ui->sliderHost->setRange(0,32);
+    ui->sliderHost->setStyleSheet(styleSheet);
 
 }
 
@@ -321,34 +335,34 @@ void funcView::sendNetWorkConfig(const ShardDatas::netWork &config)
     m_parse->sendNetWorkConfig(config);
 }
 
-void funcView::sendUp()
+void funcView::sendUp(const int& camerId)
 {
-    m_parse->up();
+    m_parse->up(camerId);
 }
 
-void funcView::sendDown()
+void funcView::sendDown(const int& camerId)
 {
-    m_parse->down();
+    m_parse->down(camerId);
 }
 
-void funcView::sendLeft()
+void funcView::sendLeft(const int& camerId)
 {
-    m_parse->left();
+    m_parse->left(camerId);
 }
 
-void funcView::sendRight()
+void funcView::sendRight(const int& camerId)
 {
-    m_parse->right();
+    m_parse->right(camerId);
 }
 
-void funcView::sendBlowup()
+void funcView::sendBlowup(const int& camerId)
 {
-    m_parse->blowUp();
+    m_parse->blowUp(camerId);
 }
 
-void funcView::sendZoomout()
+void funcView::sendZoomout(const int& camerId)
 {
-    m_parse->zoomOut();
+    m_parse->zoomOut(camerId);
 }
 
 void funcView::reboot()

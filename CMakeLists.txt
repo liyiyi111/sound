@@ -17,23 +17,19 @@ set(TS_FILES
 )
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Svg WebEngineWidgets Xml PdfWidgets
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets
                                 Network
                                 LinguistTools )
 
 
 file(GLOB_RECURSE HEADERS "*.h")
-
 file(GLOB_RECURSE SOURCES "*.cpp")
 file(GLOB_RECURSE FORMS	  "*.ui")
 
-find_package(fmt CONFIG REQUIRED)
 find_package(range-v3 CONFIG REQUIRED)
-find_package(asio CONFIG REQUIRED)
 
 
-add_executable(DigConfe
+add_executable(DigConfe WIN32
     ${HEADERS}
     ${SOURCES}
     ${FORMS}
@@ -42,13 +38,9 @@ add_executable(DigConfe
 
 target_link_libraries(DigConfe
     PRIVATE
-    Qt::WebEngineWidgets
-    Qt::Xml
-    Qt::PdfWidgets
+    Qt::Widgets
     Qt::Network
-    fmt::fmt
     range-v3::range-v3
-    asio::asio
 )
 
 qt_add_lupdate(DigConfe TS_FILES ${TS_FILES})

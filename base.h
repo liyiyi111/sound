@@ -131,12 +131,12 @@ public:
     void sendCellAddress(const QString& val);
     void sendNetWorkConfig(const ShardDatas::netWork &config);
     //上下左右
-    void up();
-    void down();
-    void left();
-    void right();
-    void blowUp();
-    void zoomOut();
+    void up(const int& camerId);
+    void down(const int& camerId);
+    void left(const int& camerId);
+    void right(const int& camerId);
+    void blowUp(const int& camerId);
+    void zoomOut(const int& camerId);
 
 private:
     const NetDriver *m_driver;

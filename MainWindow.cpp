@@ -3,6 +3,9 @@
 #include "base.h"
 #include "funcView.h"
 
+
+static const quint16 port = 6000;
+
 static QString loadConfig(const QString &fileName, QJsonArray &arrs)
 {
     QFile f(fileName);
@@ -84,7 +87,7 @@ void MainWindow::find()
 {
     auto view = new funcView();
     auto ip = ui->editIp->text();
-    int state = d->netDriver->netConnectToSever(ip,6000);
+    int state = d->netDriver->netConnectToSever(ip,port);
 
     switch (state) {
     case connentState::succ:

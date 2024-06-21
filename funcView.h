@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QTranslator>
 #include <QComboBox>
+#include "tool/slidersgroup.h"
 
 #include "base.h"
 
@@ -69,12 +70,12 @@ public:
     void sendPTZAddress(const QString& camerId,const QString& val);
     void sendCellAddress(const QString& val);
     void sendNetWorkConfig(const ShardDatas::netWork &config);
-    void sendUp();
-    void sendDown();
-    void sendLeft();
-    void sendRight();
-    void sendBlowup();
-    void sendZoomout();
+    void sendUp(const int& camerId);
+    void sendDown(const int& camerId);
+    void sendLeft(const int& camerId);
+    void sendRight(const int& camerId);
+    void sendBlowup(const int& camerId);
+    void sendZoomout(const int& camerId);
     [[maybe_unused]]void reboot();
 
 protected:
@@ -87,4 +88,7 @@ private:
     QTranslator *m_trans;
     Parse *m_parse;
     QString m_ip;
+
+    //add slider
+    Tools::SlidersGroup *verticalSlider;
 };

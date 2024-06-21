@@ -1,8 +1,6 @@
 #include "base.h"
 #include <QMessageBox>
 
-static const quint16 port = 6000;
-
 NetDriver::NetDriver(QObject *parent):
     QObject{parent},
     m_client(new QTcpSocket(this))
@@ -159,20 +157,21 @@ void Parse::sendCellSetting(const CellState &state)
 void Parse::sendPTZProtocol(const QString &val)
 {
     QHash<QString,int> boxes = {
-        {"VISCA",0x00},
-        {"PELCO_D",0x01},
-        {"PELCO_P",0x02},
+        {"VISCA",0x01},//0x00
+        {"PELCO-D",0x02}, //0x01
+        {"PELCO-P",0x03}, //0x02
     };
-
+    qDebug() << boxes[val];
     QHash<QString,Protocol> state = {
         {"VISCA",Protocol::VISCA},
-        {"PELCO_D",Protocol::PELCO_D},
-        {"PELCO_P",Protocol::PELCO_P},
+        {"PELCO-D",Protocol::PELCO_D},
+        {"PELCO-P",Protocol::PELCO_P},
     };
     m_prostate = state.value(val);
     QByteArray bytes;
     bytes.append(0xFE);
     bytes.append(0xFE);
+    bytes.append(0x04);
     bytes.append(boxes[val]);
     bytes.append(0xFF);
     m_driver->netWrite(bytes);
@@ -255,81 +254,225 @@ void Parse::sendCellAddress(const QString &val)
 void Parse::sendNetWorkConfig(const ShardDatas::netWork &config)
 {}
 
-void Parse::up()
+void Parse::up(const int& camerId)
 {
     QByteArray bytes;
-    bytes.append(0xFF);
+    switch (m_prostate) {
+    case Protocol::VISCA:
+    bytes.append(camerId);
     bytes.append(0x01); //TODO 加入相机
+    bytes.append(0x06);
+    bytes.append(0x01);
+    bytes.append(0x0F);//VV
+    bytes.append(0x0F);//WW
+    bytes.append(0xFF);
+    break;
+    case Protocol::PELCO_D:
+    bytes.append(0xFF);
+    bytes.append(camerId); //TODO 加入相机
     bytes.append((char *)0x00);
     bytes.append(0x08);
     bytes.append(0x0F);//VV
     bytes.append(0x0F);//WW
     bytes.append(0xFF);
+    break;
+    case Protocol::PELCO_P:
+    bytes.append(0xA0);
+    bytes.append(camerId); //TODO 加入相机
+    bytes.append((char *)0x00);
+    bytes.append(0x08);
+    bytes.append(0x0F);//VV
+    bytes.append(0x0F);//WW
+    bytes.append(0xAF);//WW
+    bytes.append(0xFF);
+    break;
+    }
     m_driver->netWrite(bytes);
 }
 
-void Parse::down()
+void Parse::down(const int& camerId)
 {
     QByteArray bytes;
-    bytes.append(0xFF);
-    bytes.append(0x01); //TODO 加入相机
-    bytes.append((char *)0x00);
-    bytes.append(0x10);
-    bytes.append(0x0F);//VV
-    bytes.append(0x0F);//WW
-    bytes.append(0xFF);
+    switch (m_prostate) {
+    case Protocol::VISCA:
+        bytes.append(camerId);
+        bytes.append(0x01); //TODO 加入相机
+        bytes.append(0x06);
+        bytes.append(0x01);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0x03);//WW
+        bytes.append(0x01);//WW
+        bytes.append(0xFF);
+        break;
+    case Protocol::PELCO_D:
+        bytes.append(0xFF);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x08);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xFF);
+        break;
+    case Protocol::PELCO_P:
+        bytes.append(0xA0);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x08);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xAF);//WW
+        bytes.append(0xFF);
+        break;
+    }
     m_driver->netWrite(bytes);
 }
 
-void Parse::left()
+void Parse::left(const int& camerId)
 {
     QByteArray bytes;
-    bytes.append(0xFF);
-    bytes.append(0x01); //TODO 加入相机
-    bytes.append((char *)0x00);
-    bytes.append(0x04);
-    bytes.append(0x0F);//VV
-    bytes.append(0x0F);//WW
-    bytes.append(0xFF);
+    switch (m_prostate) {
+    case Protocol::VISCA:
+        bytes.append(camerId);
+        bytes.append(0x01); //TODO 加入相机
+        bytes.append(0x06);
+        bytes.append(0x01);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0x01);
+        bytes.append(0x03);
+        bytes.append(0xFF);
+        break;
+    case Protocol::PELCO_D:
+        bytes.append(0xFF);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x04);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xFF);
+        break;
+    case Protocol::PELCO_P:
+        bytes.append(0xA0);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x08);
+        bytes.append(0x04);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xAF);
+        bytes.append(0xFF);
+        break;
+    }
     m_driver->netWrite(bytes);
 }
 
-void Parse::right()
+void Parse::right(const int& camerId)
 {
     QByteArray bytes;
-    bytes.append(0xFF);
-    bytes.append(0x01); //TODO 加入相机
-    bytes.append((char *)0x00);
-    bytes.append(0x02);
-    bytes.append(0x0F);//VV
-    bytes.append(0x0F);//WW
-    bytes.append(0xFF);
+    switch (m_prostate) {
+    case Protocol::VISCA:
+        bytes.append(camerId);
+        bytes.append(0x01); //TODO 加入相机
+        bytes.append(0x06);
+        bytes.append(0x01);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0x02);
+        bytes.append(0x03);
+        bytes.append(0xFF);
+        break;
+    case Protocol::PELCO_D:
+        bytes.append(0xFF);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x02);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xFF);
+        break;
+    case Protocol::PELCO_P:
+        bytes.append(0xA0);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x02);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xAF);
+        bytes.append(0xFF);
+        bytes.append(0xFF);
+        break;
+    }
     m_driver->netWrite(bytes);
 }
 
-void Parse::blowUp()
+void Parse::blowUp(const int& camerId)
 {
     QByteArray bytes;
-    bytes.append(0xFF);
-    bytes.append(0x01); //TODO 加入相机
-    bytes.append((char *)0x00);
-    bytes.append(0x04);
-    bytes.append(0x0F);//VV
-    bytes.append(0x0F);//WW
-    bytes.append(0xFF);
+    switch (m_prostate) {
+    case Protocol::VISCA:
+        bytes.append(0xFF);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x04);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xFF);
+        break;
+    case Protocol::PELCO_D:
+        bytes.append(0xFF);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x04);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xFF);
+        break;
+    case Protocol::PELCO_P:
+        bytes.append(0xFF);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x04);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xFF);
+        break;
+    }
     m_driver->netWrite(bytes);
 }
 
-void Parse::zoomOut()
+void Parse::zoomOut(const int& camerId)
 {
     QByteArray bytes;
-    bytes.append(0xFF);
-    bytes.append(0x01); //TODO 加入相机
-    bytes.append((char *)0x00);
-    bytes.append(0x40);
-    bytes.append(0x0F);//VV
-    bytes.append(0x0F);//WW
-    bytes.append(0xFF);
+    switch (m_prostate) {
+    case Protocol::VISCA:
+        bytes.append(0xFF);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x40);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xFF);
+        break;
+    case Protocol::PELCO_D:
+        bytes.append(0xFF);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x40);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xFF);
+        break;
+    case Protocol::PELCO_P:
+        bytes.append(0xFF);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x40);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xFF);
+        break;
+    }
     m_driver->netWrite(bytes);
 }
 

@@ -25,7 +25,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>798</height>
+     <height>797</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -158,10 +158,10 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_3">
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout" name="gridLayout_11">
         <item row="0" column="1">
          <spacer name="verticalSpacer">
           <property name="orientation">
@@ -170,7 +170,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>130</height>
+            <height>86</height>
            </size>
           </property>
          </spacer>
@@ -182,35 +182,59 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>490</width>
+            <width>510</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
         </item>
         <item row="1" column="1">
-         <layout class="QFormLayout" name="formLayout">
-          <property name="labelAlignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <property name="formAlignment">
-           <set>Qt::AlignHCenter|Qt::AlignTop</set>
-          </property>
-          <property name="horizontalSpacing">
-           <number>45</number>
-          </property>
+         <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
-           <widget class="Slider" name="sliderHost">
-            <property name="styleSheet">
-             <string notr="true">background-color: rgb(30, 37, 64);</string>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-           </widget>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>32</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Slider" name="sliderHost">
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>400</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(30, 37, 64);</string>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>0</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="1">
            <layout class="QVBoxLayout" name="verticalLayout_5">
+            <property name="spacing">
+             <number>15</number>
+            </property>
             <property name="leftMargin">
              <number>25</number>
             </property>
@@ -363,7 +387,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>489</width>
+            <width>510</width>
             <height>20</height>
            </size>
           </property>
@@ -377,7 +401,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>130</height>
+            <height>85</height>
            </size>
           </property>
          </spacer>
