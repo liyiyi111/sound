@@ -1,6 +1,17 @@
 #include "base.h"
 #include <QMessageBox>
 
+static const long INIT_DATALENGTH = 11;
+
+static auto tuple = [](const QString& val)
+{
+    auto ip1 = val.section('.',0,0).toUtf8().toHex();
+    auto ip2 = val.section('.',1,1).toUtf8().toHex();
+    auto ip3 = val.section('.',2,2).rightJustified(3,'0').toUtf8().toHex();
+    auto ip4 = val.section('.',3,3).toUtf8().toHex();
+    return std::tie(ip1,ip2,ip3,ip4);
+};
+
 NetDriver::NetDriver(QObject *parent):
     QObject{parent},
     m_client(new QTcpSocket(this))
@@ -41,15 +52,16 @@ bool NetDriver::netConnectToSever(const severInfo& ipWithPort)
     return state;
 }
 
-bool NetDriver::netConnectToSever(const QString &ip, const int &port)
+std::tuple<int,QString> NetDriver::netConnectToSever(const QString &ip, const int &port)
 {
     if(m_client->state() == QTcpSocket::ConnectedState ||
         m_client->state() == QTcpSocket::ConnectingState)
     {
         m_client->disconnectFromHost();
         bool ok = m_client->waitForDisconnected();
+        auto errMess = m_client->errorString();
         if(!ok)
-            return false;
+            return {false,errMess};
     }
     auto address = QHostAddress(ip);
     auto converPort = (unsigned short)port;
@@ -58,9 +70,9 @@ bool NetDriver::netConnectToSever(const QString &ip, const int &port)
     if(!state)
     {
         auto errMess = m_client->errorString();
-        QMessageBox::about(NULL,tr("错误提示"),tr(errMess.toUtf8()));
+        return {state,errMess};
     }
-    return state;
+    return {state,{}};
 }
 
 void NetDriver::netDisconnectFromServer()
@@ -94,9 +106,10 @@ Parse::Parse(const NetDriver *driver) :
     m_driver(driver)
 {
     connect(m_driver,&NetDriver::netRead,this,[this](const QByteArray& array){
-     qDebug() << array;
-     this->m_Datas = std::move(array);
+        qDebug() << array;
+        this->m_Datas = std::move(array);
     });
+
 }
 
 Parse::~Parse()
@@ -105,35 +118,216 @@ Parse::~Parse()
 void Parse::sendHostVolume(const int &volume)
 {
     QByteArray bytes;
-    bytes.append(0xFE);
-    bytes.append(0xFE);
+    bytes.append(0xFC);
+    bytes.append((char)0x00);
     bytes.append(0x01);
     bytes.append(volume);
-    bytes.append(0xFF);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFE);
+    assert(bytes.size() == INIT_DATALENGTH);
     m_driver->netWrite(bytes);
 }
 
 void Parse::sendPersonNums(const int &num)
 {
     QByteArray bytes;
-    bytes.append(0xFE);
-    bytes.append(0xFE);
+    bytes.append(0xFC);
+    bytes.append((char)0x00);
     bytes.append(0x02);
     bytes.append(num);
-    bytes.append(0xFF);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFE);
+    assert(bytes.size() == INIT_DATALENGTH);
+    m_driver->netWrite(bytes);
+}
+
+void Parse::cellAddress()
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x01);
+    bytes.append(0x01);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
+    m_driver->netWrite(bytes);
+}
+
+void Parse::camerAddress()
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x01);
+    bytes.append(0x02);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
+    m_driver->netWrite(bytes);
+}
+
+void Parse::microphoneGain()
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x01);
+    bytes.append(0x03);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
+    m_driver->netWrite(bytes);
+}
+
+void Parse::headphoneVolume()
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x01);
+    bytes.append(0x04);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
+    m_driver->netWrite(bytes);
+}
+
+void Parse::presetPoint()
+{
+
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x01);
+    bytes.append(0x05);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
+    m_driver->netWrite(bytes);
+}
+
+void Parse::ipAddress(const QString &val)
+{
+    auto convert = tuple(val);
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x03);
+    bytes.append(0x01);
+    bytes.append(std::get<0>(convert));
+    bytes.append(std::get<1>(convert));
+    bytes.append(std::get<2>(convert));
+    bytes.append(std::get<3>(convert));
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
+    m_driver->netWrite(bytes);
+}
+
+void Parse::subnetMask(const QString &val)
+{
+    auto convert = tuple(val);
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x03);
+    bytes.append(0x02);
+    bytes.append(std::get<0>(convert));
+    bytes.append(std::get<1>(convert));
+    bytes.append(std::get<2>(convert));
+    bytes.append(std::get<3>(convert));
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
+    m_driver->netWrite(bytes);
+}
+
+void Parse::gateway(const QString &val)
+{
+    auto convert = tuple(val);
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x03);
+    bytes.append(0x03);
+    bytes.append(std::get<0>(convert));
+    bytes.append(std::get<1>(convert));
+    bytes.append(std::get<2>(convert));
+    bytes.append(std::get<3>(convert));
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
+    m_driver->netWrite(bytes);
+}
+
+void Parse::switchLanguage(const QString &val)
+{
+    QHash<QString,char> boxes = {
+        {"简体中文",(char)0x00},
+        {"English",0x01}
+    };
+
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x04);
+    bytes.append(boxes[val]);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
     m_driver->netWrite(bytes);
 }
 
 void Parse::sendCellSetting(const CellState &state)
 {
     QByteArray bytes;
-    bytes.append(0xA0);
+    bytes.append(0xFC);
     switch(state)
     {
     case CellState::cell:
-        bytes.append((char*)0x00);
-        bytes.append((char*)0x00);
-        bytes.append((char*)0x00);
+        bytes.append(0x01);
+        bytes.append((char)0x00);
+        bytes.append((char)0x00);
         bytes.append(0x0A);
         m_driver->netWrite(std::move(bytes));
         break;
@@ -154,14 +348,14 @@ void Parse::sendCellSetting(const CellState &state)
     }
 }
 
-void Parse::sendPTZProtocol(const QString &val)
+void Parse::ptzProtocol(const QString &val)
 {
-    QHash<QString,int> boxes = {
-        {"VISCA",0x01},//0x00
+    QHash<QString,char> boxes = {
+        {"VISCA",(char)0x00},//0x00
         {"PELCO-D",0x02}, //0x01
         {"PELCO-P",0x03}, //0x02
     };
-    qDebug() << boxes[val];
+    qDebug() << Q_FUNC_INFO << boxes[val];
     QHash<QString,Protocol> state = {
         {"VISCA",Protocol::VISCA},
         {"PELCO-D",Protocol::PELCO_D},
@@ -169,44 +363,84 @@ void Parse::sendPTZProtocol(const QString &val)
     };
     m_prostate = state.value(val);
     QByteArray bytes;
-    bytes.append(0xFE);
-    bytes.append(0xFE);
-    bytes.append(0x04);
+    bytes.append(0xFC);
+    bytes.append(0x02);
+    bytes.append(0x01);
     bytes.append(boxes[val]);
-    bytes.append(0xFF);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
     m_driver->netWrite(bytes);
 }
 
-void Parse::sendBaud(const QString &val)
+void Parse::ptzAddress(const QString &val)
 {
-    QHash<QString, int> boxes = {
-        {"2400",0x01},
-        {"9600",0x02}
-    };
+    auto intVal = val.toInt();
     QByteArray bytes;
-    switch (m_prostate) {
-    case Protocol::VISCA:
-        bytes.append(0xFE);
-        bytes.append(0xFE);
-        bytes.append(0x03);
-        bytes.append(boxes.value(val));
-        bytes.append(0xFF);
-        break;
-    case Protocol::PELCO_D:
-        bytes.append(0xFE);
-        bytes.append(0xFE);
-        bytes.append(0x03);
-        bytes.append(boxes.value(val));
-        bytes.append(0xFF);
-        break;
-    case Protocol::PELCO_P:
-        bytes.append(0xFE);
-        bytes.append(0xFE);
-        bytes.append(0x03);
-        bytes.append(boxes.value(val));
-        bytes.append(0xFF);
-        break;
-    }
+    bytes.append(0xFC);
+    bytes.append(0x02);
+    bytes.append(0x02);
+    bytes.append(intVal);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
+    m_driver->netWrite(bytes);
+}
+
+void Parse::ptzBaud(const QString &val)
+{
+    QHash<QString, char> boxes = {
+                                  {"2400",(char)0x00},
+                                  {"4800",0x01},
+                                  {"9600",0x02},
+                                  };
+
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x03);
+    bytes.append(0x03);
+    bytes.append(boxes.value(val));
+    bytes.append(char(0x00));
+    bytes.append(char(0x00));
+    bytes.append(char(0x00));
+    bytes.append(char(0x00));
+    bytes.append(char(0x00));
+    bytes.append(char(0x00));
+    bytes.append(0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
+    m_driver->netWrite(bytes);
+}
+
+void Parse::switchBaud(const QString &val)
+{
+    QHash<QString, char> boxes = {
+                                  {"2400",(char)0x00},
+                                  {"4800",0x01},
+                                  {"9600",0x02},
+                                  };
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x03);
+    bytes.append(0x04);
+    bytes.append(boxes.value(val));
+    bytes.append(char(0x00));
+    bytes.append(char(0x00));
+    bytes.append(char(0x00));
+    bytes.append(char(0x00));
+    bytes.append(char(0x00));
+    bytes.append(char(0x00));
+    bytes.append(0xFD);
+    assert(bytes.size() == INIT_DATALENGTH);
     m_driver->netWrite(bytes);
 }
 

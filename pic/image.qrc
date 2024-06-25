@@ -47,5 +47,12 @@
         <file>主机.png</file>
         <file>close.png</file>
         <file>边框.png</file>
+        <file>关闭1.png</file>
+        <file>关闭2.png</file>
+        <file>未勾选.png</file>
+        <file>未勾选40.png</file>
+        <file>最小化.png</file>
+        <file>maximize.png</file>
+        <file>minimize.png</file>
     </qresource>
 </RCC>

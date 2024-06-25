@@ -108,9 +108,7 @@ QPushButton#button1
 QPushButton#button1:pressed
 {
         border-image: url(:/选中.png);
-        
 }
-
 
 QPushButton#button2
 {
@@ -127,7 +125,7 @@ QPushButton#button2:pressed
 
 QPushButton#button3
 {
-        border-image: url(:/未选中.png);
+     border-image: url(:/未选中.png);
     color: white; /* 设置字体颜色为白色 */
     font-size: 28px;
     border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
@@ -178,10 +176,6 @@ QPushButton#button6:pressed
 }
 
 /*滑块的样式*/
-
-
-
-
 QFrame, QLabel, QToolTip {
         width: 120px;
         height: 35;
@@ -210,24 +204,24 @@ QComboBox QAbstractItemView {
     
 QPushButton#btnSave
 {
-    background-image: url(:/按钮-未选中.png);
+        border-image: url(:/按钮-未选中.png);
     border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
 }
 
 QPushButton#btnSave:pressed
 {
-     background-image: url(:/按钮-选中.png);
+        border-image: url(:/按钮-选中.png);
 }
 
 QPushButton#btnSave2
 {
-    background-image: url(:/按钮-未选中.png);
+        border-image: url(:/按钮-未选中.png);
     border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
 }
 
 QPushButton#btnSave2:pressed
 {
-     background-image: url(:/按钮-选中.png);
+        border-image: url(:/按钮-选中.png);
 }
 
 QLineEdit#editIp
@@ -319,6 +313,7 @@ QPushButton#btnReduce:pressed
 
 QMessageBox{
         background-color: #1E2540;
+        border: 2px solid #3E4E76
 }
 
 
@@ -329,13 +324,30 @@ QMessageBox QPushButton {
         border: 1px solid #3E4E76; /* 按钮边框 */
         padding: 5px; /* 按钮内边距 */
     }
-
-QSlider::handle 
-{
-        width: 200px;
-        height: 120px;
-        background-color: #112C47;
-        border-radius: 10px;
-        border-image: url(:/推子.png);
+QMessageBox QLabel {
+        color: white;
+        font-size: 16px;
 }
 
+    QCheckBox { 
+        border: 0px solid #FFFFFF; /*设置qcheckbox控件的边框为0px（无边框）*/
+        border-radius: 20px; 
+        padding: 4px; 
+        spacing: 10px; 
+        font-size: 26px;
+        color: white;
+    } 
+    /*设置qcheckbox控件中的勾选框的属性*/
+     QCheckBox::indicator{
+    border: 0px solid #FFFFFF;  /*设置qcheckbox控件中勾选框的边框为0px（无边框）*/
+    width: 25px;/*勾选框的大小*/
+    height: 25px;
+    }
+    /*勾选框未选中时的图像*/
+    QCheckBox::indicator:unchecked {
+        image: url(:/未勾选.png);
+    }
+    /*勾选框选中时的图像*/
+    QCheckBox::indicator:checked {
+        image: url(:/连接状态.png);
+    }

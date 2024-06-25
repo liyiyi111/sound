@@ -1,4 +1,5 @@
 #pragma once
+#include "qwindow.h"
 #include <QWidget>
 #include <QThread>
 #include <QtNetwork>
@@ -13,8 +14,13 @@
 #include <QStyleOption>
 #include <QPainter>
 #include <QBitmap>
+
+#include "Tool/TypeList.h"
 namespace ShardDatas
 {
+using namespace Qt;
+#define RESIZE_BORDER_SIZE 8 //resize_border_size
+#define TITLE_BAR_HEIGHT 32  //title_bar_height
 struct netWork
 {
     QString ip;
@@ -38,6 +44,58 @@ static void drawView(QWidget *view, int w, int h)
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawRoundedRect(bmp.rect(),w,h);
     view->setMask(bmp);
+}
+
+static void changeCursorShape(QWidget *view, const QPointF &p)
+{
+    if (p.x() < RESIZE_BORDER_SIZE && p.y() < RESIZE_BORDER_SIZE || p.x() >= view->width() - RESIZE_BORDER_SIZE && p.y() >= view->height() - RESIZE_BORDER_SIZE) {
+        /* Top left or bottom right corner */
+        if (view->cursor().shape() != CursorShape::SizeFDiagCursor)
+            view->setCursor(QCursor(CursorShape::SizeFDiagCursor));
+    } else if (p.x() >= view->width() - RESIZE_BORDER_SIZE && p.y() < RESIZE_BORDER_SIZE || p.x() < RESIZE_BORDER_SIZE && p.y() >= view->height() - RESIZE_BORDER_SIZE) {
+        /* Top right or bottom left corner */
+        if (view->cursor().shape() != CursorShape::SizeBDiagCursor)
+            view->setCursor(QCursor(CursorShape::SizeBDiagCursor));
+    } else if (p.x() < RESIZE_BORDER_SIZE || p.x() >= view->width() - RESIZE_BORDER_SIZE) {
+        /* Left or right edge */
+        if (view->cursor().shape() != CursorShape::SizeHorCursor)
+            view->setCursor(QCursor(CursorShape::SizeHorCursor));
+    } else if (p.y() < RESIZE_BORDER_SIZE || p.y() >= view->height() - RESIZE_BORDER_SIZE) {
+        /* Top or bottom edge */
+        if (view->cursor().shape() != CursorShape::SizeVerCursor)
+            view->setCursor(QCursor(CursorShape::SizeVerCursor));
+    }  else {
+        /* Content area */
+        if (view->cursor().shape() != CursorShape::ArrowCursor)
+            view->setCursor(QCursor(CursorShape::ArrowCursor));
+    }
+}
+
+static void resizeOrMove(QWidget *view, const QPointF &p)
+{
+    Edges edges;
+    if (p.x() > view->width() - RESIZE_BORDER_SIZE)
+        edges |= RightEdge;
+    if (p.x() < RESIZE_BORDER_SIZE)
+        edges |= LeftEdge;
+    if (p.y() < RESIZE_BORDER_SIZE)
+        edges |= TopEdge;
+    if (p.y() > view->height() - RESIZE_BORDER_SIZE)
+        edges |= BottomEdge;
+
+    if (edges != 0) {
+        /* Resize the window if the event is triggered inside the borders area */
+        if (view->windowHandle()->startSystemResize(edges))
+            qInfo() << "[Info] startSystemResize() is supported";
+        else
+            qInfo() << "[Info] startSystemResize() is NOT supported";
+    } else if (p.x() > RESIZE_BORDER_SIZE && p.x() <= view->width() - RESIZE_BORDER_SIZE && p.y() >= RESIZE_BORDER_SIZE && p.y() <= TITLE_BAR_HEIGHT + RESIZE_BORDER_SIZE) {
+        /* Move the window if the event is triggered inside the title bar area */
+        if (view->windowHandle()->startSystemMove())
+            qInfo() << "[Info] startSystemMove() is supported";
+        else
+            qInfo() << "startSystemMove() is NOT supported";
+    }
 }
 }
 
@@ -82,7 +140,7 @@ public:
     //连接
     bool netConnectToSever(const severInfo& ipWithPort);
     //连接
-    bool netConnectToSever(const QString& ip, const int& port);
+    std::tuple<int,QString> netConnectToSever(const QString& ip, const int& port);
     //断开
     void netDisconnectFromServer();
     //获取与服务器的连接状态
@@ -118,15 +176,33 @@ public:
         PELCO_D,
         PELCO_P
     };
+    //测试
 
     explicit Parse(const NetDriver *driver);
     ~Parse();
 
     void sendHostVolume(const int& volume);
     void sendPersonNums(const int& num);
-    void sendCellSetting(const CellState& state);
-    void sendPTZProtocol(const QString& val);
-    void sendBaud(const QString& val);
+    //
+    void cellAddress();
+    void camerAddress();
+    void microphoneGain();
+    void headphoneVolume();
+    void presetPoint();
+
+    void ptzProtocol(const QString& val);
+    void ptzAddress(const QString &val);
+    void ptzBaud(const QString& val);
+    void switchBaud(const QString &val);
+
+    void ipAddress(const QString &val);
+    void subnetMask(const QString &val);
+    void gateway(const QString &val);
+
+    void switchLanguage(const QString& val);
+
+    [[maybe_unused]]void sendCellSetting(const CellState& state);
+
     void sendPTZAddress(const QString &camerId, const QString& val);
     void sendCellAddress(const QString& val);
     void sendNetWorkConfig(const ShardDatas::netWork &config);

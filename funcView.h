@@ -80,7 +80,8 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event) override;
-     void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
+    bool event(QEvent *event) override;
 
 private:
     Ui::funcView *ui;
@@ -88,7 +89,7 @@ private:
     QTranslator *m_trans;
     Parse *m_parse;
     QString m_ip;
-
+    bool m_bisIP;
     //add slider
     Tools::SlidersGroup *verticalSlider;
 };

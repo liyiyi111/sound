@@ -3,9 +3,7 @@
 #include "base.h"
 #include "funcView.h"
 
-
 static const quint16 port = 6000;
-
 static QString loadConfig(const QString &fileName, QJsonArray &arrs)
 {
     QFile f(fileName);
@@ -76,6 +74,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->pushButton,&QPushButton::clicked,this,
             &MainWindow::close);
+
+    connect(ui->btnMin,&QPushButton::clicked,
+            this, &MainWindow::showMinimized);
 }
 
 MainWindow::~MainWindow()
@@ -87,19 +88,18 @@ void MainWindow::find()
 {
     auto view = new funcView();
     auto ip = ui->editIp->text();
-    int state = d->netDriver->netConnectToSever(ip,port);
-
-    switch (state) {
+    auto tuple = d->netDriver->netConnectToSever(ip,port);
+    switch (std::get<0>(tuple)) {
     case connentState::succ:
         this->setVisible(false);
         view->setStyleSheet(d->array);
         view->setTitle(ip);
         view->show();
         view->setDriver(d->netDriver);
-        ui->editIp->setStyleSheet("background-color:green");
         break;
     case connentState::fail:
-        ui->editIp->setStyleSheet("background-color:red");
+        QMessageBox::about(this,tr("错误"),tr(std::get<1>(tuple).toUtf8()));
+        delete view;
         break;
     }
 }
@@ -122,5 +122,20 @@ void LineEdit::paintEvent(QPaintEvent *event)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     QWidget::closeEvent(event);
+}
+
+
+bool MainWindow::event(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::HoverMove:
+        ShardDatas::changeCursorShape(this,static_cast<QHoverEvent *>(event)->position());
+        return true;
+    case QEvent::MouseButtonPress:
+        ShardDatas::resizeOrMove(this,static_cast<QMouseEvent *>(event)->position());
+        return true;
+    default:
+        return QWidget::event(event);
+    }
 }
 

@@ -5,8 +5,6 @@
 #include <QTranslator>
 #include <QMessageBox>
 
-
-
 static QString saveConfigImp(const QString &fileName, const QByteArray &byte)
 {
     QFile f(fileName);
@@ -128,7 +126,6 @@ funcView::funcView(QWidget *parent):
     };
     newIcon({{ui->btnUp,0},{ui->btnDown,1},{ui->btnLeft,2},{ui->btnRight,3}});
 
-
     static const auto moveY = ui->hostWidget->geometry().y() + 80;
     ui->hostWidget->move(ui->hostWidget->geometry().x(), moveY);
 
@@ -141,17 +138,40 @@ funcView::funcView(QWidget *parent):
     for(auto i = 1 ; i <= 16; i++)
         ui->cbCamera->addItem(QString::number(i));
 
-    QString styleSheet = "QSlider::handle {"
-                         "width: 200%;"
-                         "height: 20px;"
-                         "background-color: #ff0000;"
-                         "border-radius: 10px;"
-                         "border-image:url(:/推子.png);"
-                         "}";
-
-
     ui->sliderHost->setRange(0,32);
-    ui->sliderHost->setStyleSheet(styleSheet);
+    ui->sliderHost->setStyleSheet(uR"(
+    QSlider {
+        background: transparent;
+    }
+    QSlider::add-page:vertical {
+        background-color: #112C47;
+        width: 4px;
+        border-radius: 2px;
+    }
+    QSlider::sub-page:vertical {
+        background-color: rgba(196, 196, 196, 0.5);
+        width: 4px;
+        border-radius: 2px;
+    }
+    QSlider::groove:vertical {
+        background: transparent;
+        width: 4px;
+        border-radius: 2px;
+    }
+    QSlider::handle:vertical {
+        height: 55px;
+        width: 70px;
+        border-image: url(:/推子.png);
+        margin: -0 -10px;
+    }
+    QSlider::handle:vertical:hover {
+        height: 55px;
+        width: 70px;
+        border-image: url(:/推子.png);
+        margin: -0 -10px;
+    }
+)"_qs);
+    ui->pushButton->setIcon(QIcon(":/关闭1.png"));
 
 }
 
@@ -162,7 +182,6 @@ funcView::~funcView()
 
 void funcView::initView()
 {
-    this->setWindowTitle(m_ip);
     auto btnGroups = [this](QList<std::pair<QPushButton*,int>> btns,QStackedWidget *widget){
         QHash<int,QString> boxes = {
                                      {0,tr("主机设置")},
@@ -180,14 +199,14 @@ void funcView::initView()
                                      };
 
         auto groups = new QButtonGroup(this);
-        groups->setObjectName("mainGroups");
+        //This property holds whether the button group is exclusive   exlusive 独有的
         groups->setExclusive(true);
         for(auto &[btn, id] : btns)
         {
             QIcon icon;
             icon.addFile(icons[id]);
             btn->setIcon(icon);
-            btn->setText(boxes.value(id));
+            btn->setText(boxes[id]);
             btn->setIconSize(QSize(60,30));
             btn->setMinimumSize(256,50);
             groups->addButton(btn,id);
@@ -235,6 +254,8 @@ void funcView::initView()
         button->setText(tr(text));
     }
 
+    if(m_bisIP) {ui->cbxIp->setText(m_ip);}
+
 //重启切换
 #if 0
     connect(ui->comLanguage,&QComboBox::currentIndexChanged,
@@ -271,15 +292,18 @@ void funcView::initConnect()
 void funcView::setTitle(QString &ip)
 {
     auto size = ip.size();
+    qDebug().noquote() << size;
     m_ip = std::move(ip);
     assert(m_ip.size()  == size);
-    this->setWindowTitle(m_ip);
+    ui->cbxIp->setText(m_ip);
+    ui->cbxIp->setChecked(true);
+    m_bisIP = true;
 }
 
 void funcView::setDriver(const NetDriver *driver)
 {
     assert(driver);
-    m_driver = driver;
+    m_driver = std::move(driver);
     m_parse = new Parse(m_driver);
     m_parse->m_prostate = Parse::VISCA;
     connect(ui->cbAddress,&QComboBox::currentTextChanged,
@@ -312,12 +336,12 @@ void funcView::sendCellSetting(const Parse::CellState &state)
 
 void funcView::sendPTZProtocol(const QString &val)
 {
-    m_parse->sendPTZProtocol(val);
+    m_parse->ptzProtocol(val);
 }
 
 void funcView::sendBaud(const QString &val)
 {
-    m_parse->sendBaud(val);
+    m_parse->ptzBaud(val);
 }
 
 void funcView::sendPTZAddress(const QString& camerId,const QString &val)
@@ -398,5 +422,19 @@ void funcView::paintEvent(QPaintEvent *event)
 void funcView::closeEvent(QCloseEvent *event)
 {
     QWidget::closeEvent(event);
+}
+
+bool funcView::event(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::HoverMove:
+        ShardDatas::changeCursorShape(this,static_cast<QHoverEvent *>(event)->position());
+        return true;
+    case QEvent::MouseButtonPress:
+        ShardDatas::resizeOrMove(this,static_cast<QMouseEvent *>(event)->position());
+        return true;
+    default:
+        return QWidget::event(event);
+    }
 }
 
