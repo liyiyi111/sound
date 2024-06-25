@@ -147,6 +147,26 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="btnMin">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="pic/image.qrc">
+            <normaloff>:/minimize.png</normaloff>:/minimize.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>50</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="pushButton">
           <property name="minimumSize">
            <size>
@@ -594,7 +614,7 @@
           <item row="1" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,0,0,0,0,0,0,0" columnstretch="1,0">
+             <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,0,0,0,0" columnstretch="1,0">
               <property name="topMargin">
                <number>0</number>
               </property>

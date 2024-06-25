@@ -58,7 +58,7 @@ funcView::funcView(QWidget *parent):
         {
             btn->setFixedSize(161,55);
             connect(btn,&QPushButton::clicked,this,[this](){
-                QMessageBox::about(this,tr("通知"),tr("请通过对应会议单元的按键修改参数"));
+                QMessageBox::information(this,tr("通知"),tr("<span style=color: blue;>请通过对应会议单元的按键修改参数</span>"));
             });
         }
     };
@@ -132,6 +132,7 @@ funcView::funcView(QWidget *parent):
     connect(ui->pushButton,&QPushButton::clicked,this, &funcView::close);
     connect(ui->btnBig,&QPushButton::clicked,this,&funcView::sendBlowup);
     connect(ui->btnReduce,&QPushButton::clicked,this,&funcView::sendZoomout);
+    connect(ui->btnMin,&QPushButton::clicked,this, &funcView::showMinimized);
     initConnect();
 
     //更新
@@ -171,7 +172,7 @@ funcView::funcView(QWidget *parent):
         margin: -0 -10px;
     }
 )"_qs);
-    ui->pushButton->setIcon(QIcon(":/关闭1.png"));
+
 
 }
 

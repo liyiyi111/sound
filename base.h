@@ -14,8 +14,6 @@
 #include <QStyleOption>
 #include <QPainter>
 #include <QBitmap>
-
-#include "Tool/TypeList.h"
 namespace ShardDatas
 {
 using namespace Qt;
@@ -98,6 +96,48 @@ static void resizeOrMove(QWidget *view, const QPointF &p)
     }
 }
 }
+//后面再来思考
+class protocalBase : public QObject
+{
+    Q_OBJECT
+public:
+    explicit protocalBase(int camerId, QObject *parent = nullptr)
+        : QObject(parent), m_camerId(camerId) {}
+    virtual ~protocalBase() {}
+    virtual QByteArray up()      const = 0;
+    virtual QByteArray down()    const = 0;
+    virtual QByteArray left()    const = 0;
+    virtual QByteArray right()   const = 0;
+    virtual QByteArray bigger()  const = 0;
+    virtual QByteArray smaller() const = 0;
+    virtual QByteArray stop()    const = 0;
+    virtual QByteArray clearPoint() const= 0;
+    virtual QByteArray setPoint() const= 0;
+    virtual QByteArray turnPoint() const= 0;
+private:
+    int m_camerId;
+};
+
+class VISCAProtocal final : public protocalBase
+{
+    Q_OBJECT
+public:
+    VISCAProtocal(int camerId, QObject *parent = nullptr)
+        : protocalBase(camerId, parent) {}
+    ~VISCAProtocal() override;
+    QByteArray up()        const override;
+    QByteArray down()      const override;
+    QByteArray left()      const override;
+    QByteArray right()     const override;
+    QByteArray bigger()    const override;
+    QByteArray smaller()   const override;
+    QByteArray stop()      const override;
+    QByteArray clearPoint()const override;
+    QByteArray setPoint()  const override;
+    QByteArray turnPoint() const override;
+private:
+    int m_camerId;
+};
 
 class PushButton : public QPushButton
 {
@@ -201,18 +241,19 @@ public:
 
     void switchLanguage(const QString& val);
 
-    [[maybe_unused]]void sendCellSetting(const CellState& state);
-
-    void sendPTZAddress(const QString &camerId, const QString& val);
-    void sendCellAddress(const QString& val);
-    void sendNetWorkConfig(const ShardDatas::netWork &config);
-    //上下左右
     void up(const int& camerId);
     void down(const int& camerId);
     void left(const int& camerId);
     void right(const int& camerId);
     void blowUp(const int& camerId);
     void zoomOut(const int& camerId);
+
+    [[maybe_unused]]void sendCellSetting(const CellState& state);
+    [[maybe_unused]]void sendPTZAddress(const QString &camerId, const QString& val);
+    [[maybe_unused]]void sendCellAddress(const QString& val);
+    [[maybe_unused]]void sendNetWorkConfig(const ShardDatas::netWork &config);
+    //上下左右
+
 
 private:
     const NetDriver *m_driver;

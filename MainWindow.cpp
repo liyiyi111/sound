@@ -98,7 +98,8 @@ void MainWindow::find()
         view->setDriver(d->netDriver);
         break;
     case connentState::fail:
-        QMessageBox::about(this,tr("错误"),tr(std::get<1>(tuple).toUtf8()));
+        auto text = QString("<font color = red>%1</font>").arg(std::get<1>(tuple)).toUtf8();
+        QMessageBox::information(this,tr("错误"),tr(text));
         delete view;
         break;
     }

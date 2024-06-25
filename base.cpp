@@ -12,6 +12,50 @@ static auto tuple = [](const QString& val)
     return std::tie(ip1,ip2,ip3,ip4);
 };
 
+auto calculateCS = [](const QByteArray &bytes)
+{
+    quint16 cs = 0;
+    auto isExist = bytes.contains(0xFF);
+    QByteArray virtualBytes;
+    if(isExist)
+    {
+        auto index = bytes.indexOf(0xFF);
+        virtualBytes = bytes.mid(index+1);
+        qDebug() << uR"(<font color=blue>([contain(0xFF)]->%1)<font>)"_qs.arg(virtualBytes);
+    }
+    else
+    {
+        virtualBytes = std::move(bytes);
+        virtualBytes.removeFirst();
+        qDebug() << QString("<font color=blue>%1<font>)").arg(virtualBytes);
+    }
+    for(auto &&byte : virtualBytes)
+        cs += static_cast<quint16>(byte);
+    return cs;
+};
+
+static auto calcCs(const QByteArray &bytes)
+{
+    quint16 cs = 0;
+    auto isExist = bytes.contains(0xFF);
+    QByteArray virtualBytes;
+    if(isExist)
+    {
+        auto index = bytes.indexOf(0xFF);
+        virtualBytes = bytes.mid(index+1);
+        qDebug() << uR"(<font color=blue>([contain(0xFF)]->%1)<font>)"_qs.arg(virtualBytes);
+    }
+    else
+    {
+        virtualBytes = std::move(bytes);
+        virtualBytes.removeFirst();
+        qDebug() << QString("<font color=blue>%1<font>)").arg(virtualBytes);
+    }
+    for(auto &&byte : virtualBytes)
+        cs += static_cast<quint16>(byte);
+    return cs;
+}
+
 NetDriver::NetDriver(QObject *parent):
     QObject{parent},
     m_client(new QTcpSocket(this))
@@ -318,7 +362,7 @@ void Parse::switchLanguage(const QString &val)
     m_driver->netWrite(bytes);
 }
 
-void Parse::sendCellSetting(const CellState &state)
+[[maybe_unused]]void Parse::sendCellSetting(const CellState &state)
 {
     QByteArray bytes;
     bytes.append(0xFC);
@@ -444,7 +488,7 @@ void Parse::switchBaud(const QString &val)
     m_driver->netWrite(bytes);
 }
 
-void Parse::sendPTZAddress(const QString &camerId, const QString &val)
+[[maybe_unused]]void Parse::sendPTZAddress(const QString &camerId, const QString &val)
 {
     auto intId = camerId.toInt();
     auto intVal = val.toInt();
@@ -482,44 +526,58 @@ void Parse::sendPTZAddress(const QString &camerId, const QString &val)
     m_driver->netWrite(bytes);
 }
 
-void Parse::sendCellAddress(const QString &val)
+[[maybe_unused]]void Parse::sendCellAddress(const QString &val)
 {}
 
-void Parse::sendNetWorkConfig(const ShardDatas::netWork &config)
+[[maybe_unused]]void Parse::sendNetWorkConfig(const ShardDatas::netWork &config)
 {}
 
 void Parse::up(const int& camerId)
 {
     QByteArray bytes;
+    quint16 cs = 0;
+    QByteArray copy;
+    bytes.append(0xFC);
     switch (m_prostate) {
     case Protocol::VISCA:
-    bytes.append(camerId);
-    bytes.append(0x01); //TODO 加入相机
-    bytes.append(0x06);
-    bytes.append(0x01);
-    bytes.append(0x0F);//VV
-    bytes.append(0x0F);//WW
-    bytes.append(0xFF);
-    break;
+        bytes.append(0x80 | (camerId & 0xFF));
+        bytes.append(0x01);
+        bytes.append(0x06);
+        bytes.append(0x01);
+        bytes.append(0x1F);
+        bytes.append(0x1F);
+        bytes.append(0x03);
+        bytes.append(0x01);
+        bytes.append(0xFF);
+        bytes.append(0xFD);
+        assert(bytes.size() == INIT_DATALENGTH);
+        break;
     case Protocol::PELCO_D:
-    bytes.append(0xFF);
-    bytes.append(camerId); //TODO 加入相机
-    bytes.append((char *)0x00);
-    bytes.append(0x08);
-    bytes.append(0x0F);//VV
-    bytes.append(0x0F);//WW
-    bytes.append(0xFF);
-    break;
+        bytes.append(0xFF);
+        bytes.append(camerId);
+        bytes.append((char)0x00);
+        bytes.append(0x08);
+        bytes.append(0x1F);
+        bytes.append(0x1F);
+        copy = bytes.mid(2);
+        for(auto &&byte : copy)
+            cs += static_cast<quint16>(byte);
+        bytes.append(cs);
+        bytes.append((char)0x00);
+        bytes.append((char)0x00);
+        bytes.append(0xFD);
+        assert(bytes.size() == INIT_DATALENGTH);
+        break;
     case Protocol::PELCO_P:
-    bytes.append(0xA0);
-    bytes.append(camerId); //TODO 加入相机
-    bytes.append((char *)0x00);
-    bytes.append(0x08);
-    bytes.append(0x0F);//VV
-    bytes.append(0x0F);//WW
-    bytes.append(0xAF);//WW
-    bytes.append(0xFF);
-    break;
+        bytes.append(0xA0);
+        bytes.append(camerId); //TODO 加入相机
+        bytes.append((char *)0x00);
+        bytes.append(0x08);
+        bytes.append(0x0F);//VV
+        bytes.append(0x0F);//WW
+        bytes.append(0xAF);//WW
+        bytes.append(0xFF);
+        break;
     }
     m_driver->netWrite(bytes);
 }
@@ -527,26 +585,38 @@ void Parse::up(const int& camerId)
 void Parse::down(const int& camerId)
 {
     QByteArray bytes;
+    quint16 cs = 0;
+    QByteArray copy;
+    bytes.append(0xFC);
     switch (m_prostate) {
     case Protocol::VISCA:
-        bytes.append(camerId);
-        bytes.append(0x01); //TODO 加入相机
+        bytes.append(0x80 | (camerId & 0xFF));
+        bytes.append(0x01);
         bytes.append(0x06);
         bytes.append(0x01);
-        bytes.append(0x0F);//VV
-        bytes.append(0x0F);//WW
-        bytes.append(0x03);//WW
-        bytes.append(0x01);//WW
+        bytes.append(0x1F);
+        bytes.append(0x1F);
+        bytes.append(0x03);
+        bytes.append(0x02);
         bytes.append(0xFF);
+        bytes.append(0xFD);
+        assert(bytes.size() == 11);
         break;
     case Protocol::PELCO_D:
         bytes.append(0xFF);
-        bytes.append(camerId); //TODO 加入相机
-        bytes.append((char *)0x00);
-        bytes.append(0x08);
-        bytes.append(0x0F);//VV
-        bytes.append(0x0F);//WW
-        bytes.append(0xFF);
+        bytes.append(camerId);
+        bytes.append((char)0x00);
+        bytes.append(0x10);
+        bytes.append(0x1F);
+        bytes.append(0x1F);
+        copy = bytes.mid(2);
+        for(auto &&byte : copy)
+            cs += static_cast<quint16>(byte);
+        bytes.append(cs);
+        bytes.append((char)0x00);
+        bytes.append((char)0x00);
+        bytes.append(0xFD);
+        assert(bytes.size() == INIT_DATALENGTH);
         break;
     case Protocol::PELCO_P:
         bytes.append(0xA0);
@@ -565,26 +635,38 @@ void Parse::down(const int& camerId)
 void Parse::left(const int& camerId)
 {
     QByteArray bytes;
+    quint16 cs = 0;
+    QByteArray copy;
+    bytes.append(0xFC);
     switch (m_prostate) {
     case Protocol::VISCA:
-        bytes.append(camerId);
-        bytes.append(0x01); //TODO 加入相机
+        bytes.append(0x80 | (camerId & 0xFF));
+        bytes.append(0x01);
         bytes.append(0x06);
         bytes.append(0x01);
-        bytes.append(0x0F);//VV
-        bytes.append(0x0F);//WW
+        bytes.append(0x1F);
+        bytes.append(0x1F);
         bytes.append(0x01);
         bytes.append(0x03);
         bytes.append(0xFF);
+        bytes.append(0xFD);
+        assert(bytes.size() == 11);
         break;
     case Protocol::PELCO_D:
         bytes.append(0xFF);
-        bytes.append(camerId); //TODO 加入相机
-        bytes.append((char *)0x00);
+        bytes.append(camerId);
+        bytes.append((char)0x00);
         bytes.append(0x04);
-        bytes.append(0x0F);//VV
-        bytes.append(0x0F);//WW
-        bytes.append(0xFF);
+        bytes.append(0x1F);
+        bytes.append(0x1F);
+        copy = bytes.mid(2);
+        for(auto &&byte : copy)
+            cs += static_cast<quint16>(byte);
+        bytes.append(cs);
+        bytes.append((char)0x00);
+        bytes.append((char)0x00);
+        bytes.append(0xFD);
+        assert(bytes.size() == INIT_DATALENGTH);
         break;
     case Protocol::PELCO_P:
         bytes.append(0xA0);
@@ -604,26 +686,38 @@ void Parse::left(const int& camerId)
 void Parse::right(const int& camerId)
 {
     QByteArray bytes;
+    quint16 cs = 0;
+    QByteArray copy;
+    bytes.append(0xFC);
     switch (m_prostate) {
     case Protocol::VISCA:
-        bytes.append(camerId);
-        bytes.append(0x01); //TODO 加入相机
+        bytes.append(0x80 | (camerId & 0xFF));
+        bytes.append(0x01);
         bytes.append(0x06);
         bytes.append(0x01);
-        bytes.append(0x0F);//VV
-        bytes.append(0x0F);//WW
+        bytes.append(0x1F);
+        bytes.append(0x1F);
         bytes.append(0x02);
         bytes.append(0x03);
         bytes.append(0xFF);
+        bytes.append(0xFD);
+        assert(bytes.size() == 11);
         break;
     case Protocol::PELCO_D:
         bytes.append(0xFF);
-        bytes.append(camerId); //TODO 加入相机
-        bytes.append((char *)0x00);
+        bytes.append(camerId);
+        bytes.append((char)0x00);
         bytes.append(0x02);
-        bytes.append(0x0F);//VV
-        bytes.append(0x0F);//WW
-        bytes.append(0xFF);
+        bytes.append(0x1F);
+        bytes.append(0x1F);
+        copy = bytes.mid(2);
+        for(auto &&byte : copy)
+            cs += static_cast<quint16>(byte);
+        bytes.append(cs);
+        bytes.append((char)0x00);
+        bytes.append((char)0x00);
+        bytes.append(0xFD);
+        assert(bytes.size() == INIT_DATALENGTH);
         break;
     case Protocol::PELCO_P:
         bytes.append(0xA0);
@@ -643,24 +737,38 @@ void Parse::right(const int& camerId)
 void Parse::blowUp(const int& camerId)
 {
     QByteArray bytes;
+    quint16 cs = 0;
+    QByteArray copy;
+    bytes.append(0xFC);
     switch (m_prostate) {
     case Protocol::VISCA:
-        bytes.append(0xFF);
-        bytes.append(camerId); //TODO 加入相机
-        bytes.append((char *)0x00);
+        bytes.append(0x80 | (camerId & 0xFF));
+        bytes.append(0x01);
         bytes.append(0x04);
-        bytes.append(0x0F);//VV
-        bytes.append(0x0F);//WW
+        bytes.append(0x07);
+        bytes.append(0x02);
         bytes.append(0xFF);
+        bytes.append((char)0x00);
+        bytes.append((char)0x00);
+        bytes.append((char)0x00);
+        bytes.append(0xFD);
+        assert(bytes.size() == 11);
         break;
     case Protocol::PELCO_D:
         bytes.append(0xFF);
-        bytes.append(camerId); //TODO 加入相机
-        bytes.append((char *)0x00);
-        bytes.append(0x04);
-        bytes.append(0x0F);//VV
-        bytes.append(0x0F);//WW
-        bytes.append(0xFF);
+        bytes.append(camerId);
+        bytes.append((char)0x00);
+        bytes.append(0x40);
+        bytes.append(0x1F);
+        bytes.append(0x1F);
+        copy = bytes.mid(2);
+        for(auto &&byte : copy)
+            cs += static_cast<quint16>(byte);
+        bytes.append(cs);
+        bytes.append((char)0x00);
+        bytes.append((char)0x00);
+        bytes.append(0xFD);
+        assert(bytes.size() == INIT_DATALENGTH);
         break;
     case Protocol::PELCO_P:
         bytes.append(0xFF);
@@ -678,24 +786,38 @@ void Parse::blowUp(const int& camerId)
 void Parse::zoomOut(const int& camerId)
 {
     QByteArray bytes;
+    quint16 cs = 0;
+    QByteArray copy;
+    bytes.append(0xFC);
     switch (m_prostate) {
     case Protocol::VISCA:
+        bytes.append(0x80 | (camerId & 0xFF));
+        bytes.append(0x01);
+        bytes.append(0x04);
+        bytes.append(0x07);
+        bytes.append(0x03);
         bytes.append(0xFF);
-        bytes.append(camerId); //TODO 加入相机
-        bytes.append((char *)0x00);
-        bytes.append(0x40);
-        bytes.append(0x0F);//VV
-        bytes.append(0x0F);//WW
-        bytes.append(0xFF);
+        bytes.append((char)0x00);
+        bytes.append((char)0x00);
+        bytes.append((char)0x00);
+        bytes.append(0xFD);
+        assert(bytes.size() == 11);
         break;
     case Protocol::PELCO_D:
         bytes.append(0xFF);
-        bytes.append(camerId); //TODO 加入相机
-        bytes.append((char *)0x00);
-        bytes.append(0x40);
-        bytes.append(0x0F);//VV
-        bytes.append(0x0F);//WW
-        bytes.append(0xFF);
+        bytes.append(camerId);
+        bytes.append((char)0x00);
+        bytes.append(0x20);
+        bytes.append(0x1F);
+        bytes.append(0x1F);
+        copy = bytes.mid(2);
+        for(auto &&byte : copy)
+            cs += static_cast<quint16>(byte);
+        bytes.append(cs);
+        bytes.append((char)0x00);
+        bytes.append((char)0x00);
+        bytes.append(0xFD);
+        assert(bytes.size() == INIT_DATALENGTH);
         break;
     case Protocol::PELCO_P:
         bytes.append(0xFF);
@@ -726,4 +848,189 @@ void ComboBox::paintEvent(QPaintEvent *event)
 {
     ShardDatas::drawView(this,1,1);
     QComboBox::paintEvent(event);
+}
+
+VISCAProtocal::~VISCAProtocal()
+{
+
+}
+
+QByteArray VISCAProtocal::up() const
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x80 | (m_camerId & 0xFF));
+    bytes.append(0x01);
+    bytes.append(0x06);
+    bytes.append(0x01);
+    bytes.append(0x1F);
+    bytes.append(0x1F);
+    bytes.append(0x03);
+    bytes.append(0x01);
+    bytes.append(0xFF);
+    bytes.append(0xFD);
+    assert(bytes.size() == 11);
+    return bytes;
+}
+
+QByteArray VISCAProtocal::down() const
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x80 | (m_camerId & 0xFF));
+    bytes.append(0x01);
+    bytes.append(0x06);
+    bytes.append(0x01);
+    bytes.append(0x1F);
+    bytes.append(0x1F);
+    bytes.append(0x03);
+    bytes.append(0x02);
+    bytes.append(0xFF);
+    bytes.append(0xFD);
+    assert(bytes.size() == 11);
+    return bytes;
+}
+
+QByteArray VISCAProtocal::left() const
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x80 | (m_camerId & 0xFF));
+    bytes.append(0x01);
+    bytes.append(0x06);
+    bytes.append(0x01);
+    bytes.append(0x1F);
+    bytes.append(0x1F);
+    bytes.append(0x01);
+    bytes.append(0x03);
+    bytes.append(0xFF);
+    bytes.append(0xFD);
+    assert(bytes.size() == 11);
+    return bytes;
+}
+
+QByteArray VISCAProtocal::right() const
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x80 | (m_camerId & 0xFF));
+    bytes.append(0x01);
+    bytes.append(0x06);
+    bytes.append(0x01);
+    bytes.append(0x1F);
+    bytes.append(0x1F);
+    bytes.append(0x02);
+    bytes.append(0x03);
+    bytes.append(0xFF);
+    bytes.append(0xFD);
+    assert(bytes.size() == 11);
+    return bytes;
+}
+
+QByteArray VISCAProtocal::bigger() const
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x80 | (m_camerId & 0xFF));
+    bytes.append(0x01);
+    bytes.append(0x04);
+    bytes.append(0x07);
+    bytes.append(0x02);
+    bytes.append(0xFF);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == 11);
+    return bytes;
+}
+
+QByteArray VISCAProtocal::smaller() const
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x80 | (m_camerId & 0xFF));
+    bytes.append(0x01);
+    bytes.append(0x04);
+    bytes.append(0x07);
+    bytes.append(0x03);
+    bytes.append(0xFF);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == 11);
+    return bytes;
+}
+
+QByteArray VISCAProtocal::stop() const
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x80 | (m_camerId & 0xFF));
+    bytes.append(0x01);
+    bytes.append(0x04);
+    bytes.append(0x07);
+    bytes.append((char)0x00);
+    bytes.append(0xFF);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == 11);
+    return bytes;
+}
+
+QByteArray VISCAProtocal::clearPoint() const
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x80 | (m_camerId & 0xFF));
+    bytes.append(0x01);
+    bytes.append(0x04);
+    bytes.append(0x3F);
+    bytes.append((char)0x00);
+    bytes.append(0x1F);
+    bytes.append(0xFF);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == 11);
+    return bytes;
+}
+
+QByteArray VISCAProtocal::setPoint() const
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x80 | (m_camerId & 0xFF));
+    bytes.append(0x01);
+    bytes.append(0x04);
+    bytes.append(0x3F);
+    bytes.append(0x02);
+    bytes.append(0x1F);
+    bytes.append(0xFF);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == 11);
+    return bytes;
+}
+
+QByteArray VISCAProtocal::turnPoint() const
+{
+    QByteArray bytes;
+    bytes.append(0xFC);
+    bytes.append(0x80 | (m_camerId & 0xFF));
+    bytes.append(0x01);
+    bytes.append(0x04);
+    bytes.append(0x3F);
+    bytes.append(0x01);
+    bytes.append(0x1F);
+    bytes.append(0xFF);
+    bytes.append((char)0x00);
+    bytes.append((char)0x00);
+    bytes.append(0xFD);
+    assert(bytes.size() == 11);
+    return bytes;
 }
