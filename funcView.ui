@@ -203,7 +203,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="page_3">
          <layout class="QGridLayout" name="gridLayout_11">
@@ -235,6 +235,12 @@
           </item>
           <item row="1" column="1">
            <layout class="QGridLayout" name="gridLayout">
+            <property name="horizontalSpacing">
+             <number>25</number>
+            </property>
+            <property name="verticalSpacing">
+             <number>12</number>
+            </property>
             <item row="0" column="0">
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
@@ -519,7 +525,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QPushButton" name="btnCellAddr_2">
+             <widget class="QPushButton" name="btnCamAddr">
               <property name="text">
                <string>编辑</string>
               </property>
@@ -547,7 +553,7 @@
              </widget>
             </item>
             <item row="4" column="1">
-             <widget class="QPushButton" name="btnHead_2">
+             <widget class="QPushButton" name="btnPoint">
               <property name="text">
                <string>编辑</string>
               </property>
@@ -612,16 +618,19 @@
            </spacer>
           </item>
           <item row="1" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0,1">
             <item>
-             <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,0,0,0,0" columnstretch="1,0">
+             <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,1,1,1,1" columnstretch="1,1">
               <property name="topMargin">
                <number>0</number>
               </property>
               <property name="rightMargin">
                <number>12</number>
               </property>
-              <property name="spacing">
+              <property name="horizontalSpacing">
+               <number>25</number>
+              </property>
+              <property name="verticalSpacing">
                <number>6</number>
               </property>
               <item row="0" column="1">
@@ -657,7 +666,7 @@
                </widget>
               </item>
               <item row="3" column="1">
-               <widget class="ComboBox" name="cbCell">
+               <widget class="ComboBox" name="cbSwitchBaud">
                 <property name="minimumSize">
                  <size>
                   <width>161</width>
@@ -666,7 +675,17 @@
                 </property>
                 <item>
                  <property name="text">
-                  <string>1</string>
+                  <string>2400</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>4800</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>9600</string>
                  </property>
                 </item>
                </widget>
@@ -713,6 +732,11 @@
                 <item>
                  <property name="text">
                   <string>2400</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>4800</string>
                  </property>
                 </item>
                 <item>
@@ -791,6 +815,9 @@
             </item>
             <item>
              <layout class="QGridLayout" name="gridLayout_4">
+              <property name="horizontalSpacing">
+               <number>25</number>
+              </property>
               <item row="0" column="0">
                <spacer name="horizontalSpacer_3">
                 <property name="orientation">

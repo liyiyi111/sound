@@ -56,6 +56,32 @@ QPushButton#btnCellAddr:pressed
         background-image: url(:/按钮-选中.png);
 }
 
+QPushButton#btnCamAddr
+{
+    background-image: url(:/按钮-未选中.png);
+    font-size: 15px;
+    color: white; /* 设置字体颜色为白色 */
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#btnCamAddr:pressed
+{
+        background-image: url(:/按钮-选中.png);
+}
+
+
+QPushButton#btnPoint
+{
+    background-image: url(:/按钮-未选中.png);
+    font-size: 15px;
+    color: white; /* 设置字体颜色为白色 */
+    border-radius: 10px; /* 设置圆角半径为10px，可以根据需要调整 */
+}
+
+QPushButton#btnPoint:pressed
+{
+        background-image: url(:/按钮-选中.png);
+}
 
 QPushButton#btnHead
 {
@@ -95,7 +121,6 @@ QPushButton#button0:pressed
 {
         border-image: url(:/选中.png);
 }
-
 
 QPushButton#button1
 {
@@ -232,11 +257,16 @@ QLineEdit#editIp
     padding-bottom: 32px; /* 设置文本与上边框的间距为5px，可以根据需要调整 */
 }
 
+QLineEdit {
+        color: white;
+        font-size: 26px;
+}
 QLineEdit#editIpAddress {
         width: 187px;
         border-image: url(:/按钮-未选中.png);
         background-repeat: no-repeat;
         min-height: 52px;
+        
  }
  
  QLineEdit#editIpAddress:hover {

@@ -3,9 +3,8 @@
 #include <QWidget>
 #include <QTranslator>
 #include <QComboBox>
-#include "tool/slidersgroup.h"
-
 #include "base.h"
+#include "protocal.h"
 
 namespace Ui {
 class funcView;
@@ -61,12 +60,13 @@ public:
     void initConnect();
     void setTitle(QString &ip);
     void setDriver(const NetDriver *driver);
-
     void sendHostVolume(const int& val);
     void sendPersonNums(const int& val);
     void sendCellSetting(const Parse::CellState& state);
     void sendPTZProtocol(const QString& val);
     void sendBaud(const QString& val);
+    void sendSwitchBaud(const QString& val);
+    void sendNetWork();
     void sendPTZAddress(const QString& camerId,const QString& val);
     void sendCellAddress(const QString& val);
     void sendNetWorkConfig(const ShardDatas::netWork &config);
@@ -90,6 +90,4 @@ private:
     Parse *m_parse;
     QString m_ip;
     bool m_bisIP;
-    //add slider
-    Tools::SlidersGroup *verticalSlider;
 };

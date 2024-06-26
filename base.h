@@ -14,6 +14,9 @@
 #include <QStyleOption>
 #include <QPainter>
 #include <QBitmap>
+
+#include "protocal.h"
+
 namespace ShardDatas
 {
 using namespace Qt;
@@ -96,48 +99,6 @@ static void resizeOrMove(QWidget *view, const QPointF &p)
     }
 }
 }
-//后面再来思考
-class protocalBase : public QObject
-{
-    Q_OBJECT
-public:
-    explicit protocalBase(int camerId, QObject *parent = nullptr)
-        : QObject(parent), m_camerId(camerId) {}
-    virtual ~protocalBase() {}
-    virtual QByteArray up()      const = 0;
-    virtual QByteArray down()    const = 0;
-    virtual QByteArray left()    const = 0;
-    virtual QByteArray right()   const = 0;
-    virtual QByteArray bigger()  const = 0;
-    virtual QByteArray smaller() const = 0;
-    virtual QByteArray stop()    const = 0;
-    virtual QByteArray clearPoint() const= 0;
-    virtual QByteArray setPoint() const= 0;
-    virtual QByteArray turnPoint() const= 0;
-private:
-    int m_camerId;
-};
-
-class VISCAProtocal final : public protocalBase
-{
-    Q_OBJECT
-public:
-    VISCAProtocal(int camerId, QObject *parent = nullptr)
-        : protocalBase(camerId, parent) {}
-    ~VISCAProtocal() override;
-    QByteArray up()        const override;
-    QByteArray down()      const override;
-    QByteArray left()      const override;
-    QByteArray right()     const override;
-    QByteArray bigger()    const override;
-    QByteArray smaller()   const override;
-    QByteArray stop()      const override;
-    QByteArray clearPoint()const override;
-    QByteArray setPoint()  const override;
-    QByteArray turnPoint() const override;
-private:
-    int m_camerId;
-};
 
 class PushButton : public QPushButton
 {
@@ -177,19 +138,12 @@ public:
         QString ip;
         int port;
     };
-    //连接
     bool netConnectToSever(const severInfo& ipWithPort);
-    //连接
     std::tuple<int,QString> netConnectToSever(const QString& ip, const int& port);
-    //断开
     void netDisconnectFromServer();
-    //获取与服务器的连接状态
     void netGetNetStatus();
-    //通过网络发送数据
     void netWrite(const QByteArray& data) const;
-    //接收
     void readyReadSlot();
-    //TODO 增加心跳回调
     void callheartbeat();
 signals:
     void netRead(const QByteArray& data);
@@ -210,14 +164,12 @@ public:
         head
     };
 
-    enum  Protocol
+    enum Protocol
     {
         VISCA = 0,
         PELCO_D,
         PELCO_P
     };
-    //测试
-
     explicit Parse(const NetDriver *driver);
     ~Parse();
 
@@ -252,14 +204,16 @@ public:
     [[maybe_unused]]void sendPTZAddress(const QString &camerId, const QString& val);
     [[maybe_unused]]void sendCellAddress(const QString& val);
     [[maybe_unused]]void sendNetWorkConfig(const ShardDatas::netWork &config);
-    //上下左右
 
+public:
+    Protocol m_prostate;
 
 private:
     const NetDriver *m_driver;
     QByteArray m_Datas;
-public:
-    Protocol m_prostate;
+
+    protocalController *m_controller;
+    protocalBase  *m_base;
 };
 
 

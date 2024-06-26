@@ -125,7 +125,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QWidget::closeEvent(event);
 }
 
-
 bool MainWindow::event(QEvent *event)
 {
     switch (event->type()) {

@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include <QByteArray>
 #include <QDataStream>
 #include <QCoreApplication>

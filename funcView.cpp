@@ -54,16 +54,38 @@ funcView::funcView(QWidget *parent):
             });
     //单元设置
     auto newGroups = [this](QList<std::pair<QPushButton *,int>>btns) {
+        auto grounp = new QButtonGroup(this);
         for(auto &[btn,id] : btns)
         {
             btn->setFixedSize(161,55);
+            btn->setFlat(true);
+            grounp->addButton(btn,id);
             connect(btn,&QPushButton::clicked,this,[this](){
-                QMessageBox::information(this,tr("通知"),tr("<span style=color: blue;>请通过对应会议单元的按键修改参数</span>"));
+                QMessageBox::information(this,tr("通知"),tr("<font color=blue>请通过对应会议单元的按键修改参数</font>"));
             });
         }
+        connect(grounp, &QButtonGroup::idClicked, this, [this](const int &id) {
+            switch (id) {
+            case 0:
+                m_parse->cellAddress();
+                break;
+            case 1:
+                m_parse->camerAddress();
+                break;
+            case 2:
+                m_parse->microphoneGain();
+                break;
+            case 3:
+                m_parse->headphoneVolume();
+                break;
+            case 4:
+                m_parse->presetPoint();
+                break;
+            }
+        });
     };
 
-    newGroups({{ui->btnCellAddr,0},{ui->btnMic,1},{ui->btnHead,2}});
+    newGroups({{ui->btnCellAddr,0},{ui->btnCamAddr,1},{ui->btnMic,2},{ui->btnHead,3},{ui->btnPoint,4}});
     //圆角
     auto roundness = [this](QList<std::pair<QPushButton *,int>>btns)
     {
@@ -138,6 +160,9 @@ funcView::funcView(QWidget *parent):
     //更新
     for(auto i = 1 ; i <= 16; i++)
         ui->cbCamera->addItem(QString::number(i));
+
+    for(auto i = 1;  i <= 128; i++)
+        ui->cbAddress->addItem(QString::number(i));
 
     ui->sliderHost->setRange(0,32);
     ui->sliderHost->setStyleSheet(uR"(
@@ -288,17 +313,19 @@ void funcView::initConnect()
     connect(ui->cbBaud,&QComboBox::currentTextChanged,
             this,&funcView::sendBaud);
 
+    connect(ui->cbSwitchBaud,&QComboBox::currentTextChanged,
+            this,&funcView::sendSwitchBaud);
+
+    connect(ui->btnSave2, &QPushButton::clicked,
+            this, &funcView::sendNetWork);
 }
 
 void funcView::setTitle(QString &ip)
 {
-    auto size = ip.size();
-    qDebug().noquote() << size;
+    m_bisIP = true;
     m_ip = std::move(ip);
-    assert(m_ip.size()  == size);
     ui->cbxIp->setText(m_ip);
     ui->cbxIp->setChecked(true);
-    m_bisIP = true;
 }
 
 void funcView::setDriver(const NetDriver *driver)
@@ -343,6 +370,21 @@ void funcView::sendPTZProtocol(const QString &val)
 void funcView::sendBaud(const QString &val)
 {
     m_parse->ptzBaud(val);
+}
+
+void funcView::sendSwitchBaud(const QString &val)
+{
+    m_parse->switchBaud(val);
+}
+
+void funcView::sendNetWork()
+{
+    auto ip = ui->editIpAddress->text();
+    auto submask = ui->editMask->text();
+    auto gateway = ui->editGateWay->text();
+    m_parse->ipAddress(ip);
+    m_parse->subnetMask(submask);
+    m_parse->gateway(gateway);
 }
 
 void funcView::sendPTZAddress(const QString& camerId,const QString &val)

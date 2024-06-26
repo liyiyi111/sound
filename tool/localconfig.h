@@ -8,7 +8,6 @@
 
 namespace Tools
 {
-
 namespace LocalConfig
 {
 // static QDir config(const QString& subdir = {});
@@ -36,6 +35,7 @@ struct Detector<T, Op, std::void_t<Op<T>>> : std::true_type
 {
     using type = typename Op<T>::type;
 };
+
 template<typename T>
 struct  F
 {
